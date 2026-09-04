@@ -323,6 +323,7 @@ let settings={...SETTINGS_DEF};
 const boite=()=>String(settings.boite||"").trim()||SETTINGS_DEF.boite;
 let monthFilter=null;
 let zoneFilter=null;          // 1..12, "none", ou null
+let typeFilter=null;          // "Festival", "SMAC", … ou null
 let prioSort="echeance";       // "echeance" | "silence"
 
 const $=s=>document.querySelector(s);
@@ -440,6 +441,18 @@ function zoneBarHTML(){
     '</div>';
 }
 
+function typeBarHTML(){
+  const all=[...venues.values()].filter(v=>v.status!=="mort");
+  const c={}; all.forEach(v=>{const t=v.type||"?"; c[t]=(c[t]||0)+1;});
+  const keys=TYPES.filter(t=>c[t]).concat(Object.keys(c).filter(t=>TYPES.indexOf(t)<0));
+  if(!keys.length) return "";
+  return '<div class="zones"><span class="zl">Type</span>'+
+    keys.map(t=>'<button class="zb" data-type="'+esc(t)+'" aria-pressed="'+(typeFilter===t)+'">'+
+      esc(t)+'<span class="n">'+c[t]+'</span></button>').join("")+
+    (typeFilter?'<button class="zb clear" data-a="cleartype">tout</button>':'')+
+    '</div>';
+}
+
 function timelineHTML(){
   const all=[...venues.values()], cm=TODAY.getMonth()+1;
   let h='<div class="tl">';
@@ -473,7 +486,9 @@ function prioList(){
   const set=new Map();
   all.filter(v=>v.pin).forEach(v=>set.set(v.id,v));            // priorité décidée par vous
   all.filter(dueByHand).forEach(v=>set.set(v.id,v));           // date posée à la main, échue
-  all.filter(v=>inWin(v)&&!waiting(v)).forEach(v=>set.set(v.id,v));
+  // seuls les festivals remontent tout seuls à l'approche de leur édition ;
+  // une salle ou un bar arrive ici par une étoile ou une date de relance posée à la main
+  all.filter(v=>v.type==="Festival"&&inWin(v)&&!waiting(v)).forEach(v=>set.set(v.id,v));
   const l=[...set.values()];
   l.sort((a,b)=>{
     if(!!b.pin!==!!a.pin) return a.pin?-1:1;
@@ -554,10 +569,10 @@ function pinBtn(v){
 
 function prioHTML(){
   const l=prioList();
-  let h='<div class="prio" id="s-prio"><div class="ph"><h2>À relancer là</h2><span class="n">'+l.length+'</span><span class="sp"></span>'+
+  let h='<div class="prio" id="s-prio"><div class="ph"><h2>À relancer là</h2><span class="gs" style="font-weight:400">festivals \u00B7 \u00E9toil\u00E9s</span><span class="n">'+l.length+'</span><span class="sp"></span>'+
     '<button class="sortb" data-a="sort-echeance" aria-pressed="'+(prioSort==="echeance")+'">par échéance</button>'+
     '<button class="sortb" data-a="sort-silence" aria-pressed="'+(prioSort==="silence")+'">par silence</button></div>';
-  if(!l.length) h+='<p class="empty">Rien d\u2019urgent. Coche « prioritaire » sur un lieu, ou pose-lui une date de relance, pour le faire remonter ici.</p>';
+  if(!l.length) h+='<p class="empty">Rien d\u2019urgent. Seuls les festivals remontent ici tout seuls, \u00E0 l\u2019approche de leur \u00E9dition. Pour le reste, mets une \u00E9toile ou pose une date de relance.</p>';
   else{
     h+=l.slice(0,10).map(v=>{
       const c=contactOf(v), lg=last(v.id);
@@ -832,13 +847,14 @@ function appHTML(){
   if(monthFilter==="none") all=all.filter(v=>!v.month);
   else if(monthFilter!==null) all=all.filter(v=>v.month===monthFilter);
   if(zoneFilter) all=all.filter(v=>(zoneOf(v)||"?")===zoneFilter);
+  if(typeFilter) all=all.filter(v=>(v.type||"?")===typeFilter);
 
   let h="";
   if(sessionLog.length)
     h+='<div class="share"><span><b>'+sessionLog.length+' changement'+(sessionLog.length>1?'s':'')+'</b> depuis que tu as ouvert la page.</span>'+
        '<button class="b o s" data-a="share">Partager par mail</button>'+
        '<button class="mini" data-a="sharedone">plus tard</button></div>';
-  h+=timelineHTML()+zoneBarHTML()+prioHTML()+
+  h+=timelineHTML()+typeBarHTML()+zoneBarHTML()+prioHTML()+
     '<div class="bar2"><input class="q" id="q" placeholder="Chercher un nom, une ville, une adresse…" value="'+esc(query)+'"></div>';
 
   GROUPS.forEach(g=>{
@@ -1224,6 +1240,9 @@ function wire(){
   document.querySelectorAll("[data-zone]").forEach(b=>b.onclick=()=>{
     zoneFilter = zoneFilter===b.dataset.zone ? null : b.dataset.zone; render();
   });
+  document.querySelectorAll("[data-type]").forEach(b=>b.onclick=()=>{
+    typeFilter = typeFilter===b.dataset.type ? null : b.dataset.type; render();
+  });
   document.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{
     const el=document.getElementById(b.dataset.jump);
     if(el&&el.scrollIntoView) el.scrollIntoView({block:"start",behavior:"smooth"});
@@ -1345,6 +1364,7 @@ async function act(a){
     }
     case "clearmo": monthFilter=null; render(); break;
     case "clearzone": zoneFilter=null; render(); break;
+    case "cleartype": typeFilter=null; render(); break;
     case "sort-echeance": prioSort="echeance"; render(); break;
     case "sort-silence": prioSort="silence"; render(); break;
     case "tpl-full":  draft=tplFull(v); draftMsg=""; render(); break;
