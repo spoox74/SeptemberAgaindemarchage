@@ -1192,11 +1192,13 @@ function render(){
           start:(typeof ae.selectionStart==="number")?ae.selectionStart:null,
           end:(typeof ae.selectionEnd==="number")?ae.selectionEnd:null};
   }
-  app.innerHTML=appHTML();
-  $("#nav").innerHTML=navHTML();
-  $("#side").innerHTML=sideHTML();
-  $("#modal").innerHTML=modalHTML();
-  wire();
+  try{
+    app.innerHTML=appHTML();
+    $("#nav").innerHTML=navHTML();
+    $("#side").innerHTML=sideHTML();
+    $("#modal").innerHTML=modalHTML();
+    wire();
+  }catch(e){ fail("affichage",e); return; }
   if(keep){
     const el=document.getElementById(keep.id);
     if(el){
@@ -1412,7 +1414,17 @@ async function act(a){
 }
 
 /* ===================== amorçage ===================== */
-function note(m){ const b=$("#boot"); if(b){ b.hidden=false; b.textContent=m; } }
+let hardError=false;
+function note(m,dur){ const b=$("#boot"); if(!b) return;
+  if(hardError&&!dur) return;                 // ne pas masquer une erreur par un message d'attente
+  if(dur) hardError=true;
+  b.hidden=false; b.textContent=m;
+}
+function fail(where,e){
+  const msg=(e&&(e.code||e.message))||String(e);
+  note("Erreur ("+where+") : "+msg+"  \u2014 ouvre la console du navigateur (F12) pour le détail.",true);
+  try{ console.error("[september-again]",where,e); }catch(x){}
+}
 function loadLocal(){
   venues=new Map(); exchanges=[]; people=new Map();
   SEED_PEOPLE.forEach(p=>people.set(p.id,{...p,venueIds:[...p.venueIds]}));
@@ -1646,9 +1658,15 @@ async function boot(){
   },()=>{});
 }
 function start(){
-  window.addEventListener("error",e=>note("Erreur : "+(e.message||"?")));
-  try{ boot(); }catch(e){ note("Erreur au démarrage : "+((e&&e.message)||e)); }
-  setTimeout(()=>{ const a=$("#app"); if(!a||!a.innerHTML.trim()) note("Rien ne s'est affiché. Recharge la page."); },6000);
+  window.addEventListener("error",e=>fail("script",e.error||e));
+  window.addEventListener("unhandledrejection",e=>fail("réseau ou base",e.reason));
+  try{ boot().catch(e=>fail("démarrage",e)); }
+  catch(e){ fail("démarrage",e); }
+  setTimeout(()=>{
+    const a=$("#app");
+    if(!hardError&&(!a||!a.innerHTML.trim()))
+      note("Rien ne s\u2019est affiché, et aucune erreur n\u2019a été signalée. Regarde la console (F12).",true);
+  },6000);
 }
 if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",start); else start();
 })();
