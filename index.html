@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>September Again — démarchage</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600&family=Saira+Condensed:wght@500;600;700&display=swap">
+<style>
+:root{--paper:#DDD3BE;--card:#E9E1D0;--ink:#2B1A16;--ink-soft:#5C4A40;--fade:#8A7C68;
+ --rule:#BCAF97;--oxblood:#7C2733;--amber:#B36B12;--moss:#4C5F3C;--dead:#9A9086;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#191512;--card:#241D19;--ink:#E6DCC8;
+ --ink-soft:#B8AB96;--fade:#8A7C68;--rule:#3A302A;--oxblood:#D0616E;--amber:#E0A03F;--moss:#93AC7C;--dead:#6B6157;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#191512;--card:#241D19;--ink:#E6DCC8;--ink-soft:#B8AB96;--fade:#8A7C68;
+ --rule:#3A302A;--oxblood:#D0616E;--amber:#E0A03F;--moss:#93AC7C;--dead:#6B6157;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+ font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.c,h1,h2,h3{font-family:"Saira Condensed","Arial Narrow","Helvetica Neue Condensed",Helvetica,Arial,sans-serif;font-weight:600}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none;padding:0;text-align:inherit}
+:focus-visible{outline:2px solid var(--oxblood);outline-offset:2px;border-radius:3px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px 70px}
+.top{display:flex;align-items:center;gap:10px;padding:16px 0 12px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.mark{font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif;font-weight:700;font-size:19px;text-transform:uppercase;line-height:1}
+.top .sp{flex:1}
+.top select{background:transparent;border:1px solid var(--rule);border-radius:3px;padding:4px 7px;font-size:13px}
+.lnk{font-size:13px;color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:1px}
+.lnk:hover{color:var(--oxblood);border-color:var(--oxblood)}
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;margin:18px 0 2px;align-items:end}
+.tlc{display:flex;flex-direction:column;justify-content:flex-end;min-height:112px;padding:0;border-radius:3px 3px 0 0}
+.tlc:hover{background:var(--card)}
+.tlc[aria-pressed="true"]{background:var(--card);box-shadow:inset 0 0 0 1px var(--oxblood)}
+.tlb{display:flex;flex-direction:column;gap:2px;justify-content:flex-end;padding:0 2px}
+.tlb i{height:9px;border-radius:1px;background:var(--rule)}
+.tlb i.w{background:var(--amber)} .tlb i.ok{background:var(--moss)} .tlb i.dead{background:var(--dead)}
+.tln{font-size:12px;text-align:center;color:var(--fade);font-variant-numeric:tabular-nums;padding-top:3px;
+ font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif}
+.tll{font-size:12px;text-align:center;color:var(--fade);border-top:1px solid var(--rule);padding:3px 0 5px;
+ font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif;text-transform:uppercase}
+.tlc.now .tll{color:var(--ink);border-top:2px solid var(--ink)}
+.tlc.w .tll{color:var(--amber);border-top-color:var(--amber)}
+.tlc.none .tll{color:var(--oxblood);border-top-style:dashed}
+.snote{font-size:13px;color:var(--ink-soft);margin:0}
+.filtered{display:flex;gap:9px;align-items:center;font-size:13.5px;color:var(--amber);margin-top:9px}
+/* encart prioritaire */
+.prio{background:var(--card);border:1px solid var(--oxblood);border-radius:5px;padding:15px 16px;margin-top:20px}
+.prio .ph{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:4px}
+.prio h2{font-size:19px;margin:0;text-transform:uppercase;letter-spacing:.02em}
+.prio .n{font-size:15px;color:var(--fade);font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif}
+.prio .sp{flex:1}
+.sortb{font-size:12.5px;color:var(--ink-soft);border:1px solid var(--rule);border-radius:3px;padding:3px 8px}
+.sortb[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.pline{display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px dotted var(--rule);flex-wrap:wrap}
+.pline:last-child{border-bottom:none}
+.pline .pn{font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif;font-size:18px;font-weight:600}
+.pline .pw{font-size:13px;color:var(--ink-soft);flex:1;min-width:120px}
+.pline .pw b{color:var(--amber)}
+.prio .empty{font-size:13.5px;color:var(--ink-soft);margin:6px 0 0}
+.bar2{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0 4px}
+.q{flex:1;min-width:160px;border:1px solid var(--rule);border-radius:3px;padding:7px 10px;font-size:14px;background:var(--card)}
+/* groupes */
+.grp{margin-top:26px}
+.ghead{display:flex;align-items:baseline;gap:9px;width:100%;padding-bottom:7px;border-bottom:2px solid var(--ink)}
+.ghead h2{font-size:20px;margin:0;text-transform:uppercase;letter-spacing:.02em}
+.ghead .n{font-size:16px;color:var(--fade);font-variant-numeric:tabular-nums;font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif}
+.ghead .gs{flex:1;font-size:13px;color:var(--ink-soft);text-align:right;font-weight:400;font-family:"IBM Plex Sans",sans-serif}
+.gsub{font-size:13px;color:var(--ink-soft);margin:7px 0 0}
+.rows{margin-top:2px}
+.row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1.4fr) auto;gap:10px;align-items:baseline;
+ width:100%;padding:10px 8px 10px 11px;border-bottom:1px solid var(--rule);position:relative}
+@media(max-width:660px){.row{grid-template-columns:1fr;gap:2px}}
+.row:hover{background:var(--card)}
+.row[aria-expanded="true"]{background:var(--card)}
+.row[aria-expanded="true"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--oxblood)}
+.rn{font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif;font-size:19px;font-weight:600;line-height:1.15}
+.rp{font-size:12.5px;color:var(--fade);display:block;font-family:"IBM Plex Sans",sans-serif;font-weight:400;margin-top:1px}
+.rp .auto{color:var(--amber);font-style:italic}
+.rw{font-size:13.5px;color:var(--ink-soft)}
+.rw b{color:var(--amber);font-weight:600}
+.rl{font-size:12.5px;color:var(--fade);white-space:nowrap;text-align:right}
+.rc{font-size:12.5px;margin-top:3px;display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-family:"IBM Plex Sans",sans-serif;font-weight:400}
+.rc .ct{color:var(--ink-soft);word-break:break-all;margin-right:2px}
+.rc .no{color:var(--amber);font-weight:600}
+.cp{font-size:11.5px;color:var(--fade);border:1px solid var(--rule);border-radius:3px;padding:1px 6px}
+.cp:hover{color:var(--ink);border-color:var(--ink)}
+.pin{font-size:15px;color:var(--rule);padding:0 5px;line-height:1}
+.pin:hover{color:var(--amber)}
+.pin.on{color:var(--amber)}
+@media(max-width:660px){.rl{text-align:left}}
+/* panneau déplié */
+.panel{background:var(--card);border-bottom:1px solid var(--rule);padding:16px 14px 18px 14px}
+.pnote{font-size:14px;color:var(--ink-soft);padding-left:11px;border-left:2px solid var(--rule);margin:0 0 14px;line-height:1.5}
+.log{list-style:none;margin:0 0 14px;padding:0}
+.log li{display:flex;gap:11px;padding:7px 0;border-bottom:1px dotted var(--rule);font-size:13.5px}
+.log .w{flex:0 0 80px;color:var(--ink-soft);font-variant-numeric:tabular-nums;font-weight:500}
+.log .w em{display:block;font-style:normal;font-size:10.5px;color:var(--oxblood)}
+.log .t{flex:1;min-width:0}.log .who{font-weight:600}
+.del{color:var(--fade);font-size:17px;line-height:1;padding:0 4px}.del:hover{color:var(--oxblood)}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.b{border-radius:4px;padding:9px 15px;font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif;
+ font-size:17px;font-weight:600;background:var(--ink);color:var(--paper)}
+.b:hover{background:var(--oxblood)}
+.b.o{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+.b.o:hover{border-color:var(--ink)}
+.b.s{font-size:14px;padding:6px 11px}
+.b[disabled]{opacity:.45;cursor:default}
+.draft{margin-top:14px}
+.draft textarea{width:100%;min-height:240px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;
+ padding:12px;font-size:14.5px;line-height:1.55;resize:vertical}
+.msg{font-size:13px;color:var(--ink-soft);margin-top:8px}.msg.err{color:var(--oxblood)}
+a.go{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule)}
+a.go:hover{color:var(--oxblood);border-bottom-color:var(--oxblood)}
+a.cp.go{display:inline-block;text-decoration:none;border:1px solid var(--rule);border-bottom-color:var(--rule);color:var(--fade)}
+a.cp.go:hover{color:var(--ink);border-color:var(--ink)}
+#gate{display:flex;justify-content:center;padding:40px 0}
+.gbox{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:22px 24px;max-width:420px;width:100%}
+.gbox h2{margin:0 0 10px}
+.gbox p{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin:0}
+.b.danger{background:var(--oxblood)}
+.b.o.danger{background:transparent;color:var(--oxblood);border-color:var(--oxblood)}
+.b.o.danger:hover{background:var(--oxblood);color:var(--paper)}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 13px;margin-top:14px;
+ padding-top:14px;border-top:1px solid var(--rule)}
+.f label{display:block;font-size:11.5px;color:var(--fade);margin-bottom:3px}
+.f input,.f select,.f textarea{width:100%;background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:7px 9px;font-size:14px}
+.addrow{display:grid;grid-template-columns:130px 130px 1fr;gap:8px;margin:12px 0}
+@media(max-width:520px){.addrow{grid-template-columns:1fr 1fr}.addrow .n2{grid-column:1/-1}}
+.addrow input,.addrow select{background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:7px 9px;font-size:13.5px;width:100%}
+.hint{font-size:12.5px;color:var(--fade);margin-top:7px}
+/* personnes */
+.ppl{margin-top:15px;padding-top:14px;border-top:1px solid var(--rule)}
+.ppl h4{font-size:13px;margin:0 0 9px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);font-weight:600;
+ font-family:"IBM Plex Sans",sans-serif}
+.pc{display:flex;gap:9px;align-items:baseline;padding:8px 0;border-bottom:1px dotted var(--rule);flex-wrap:wrap}
+.pc:last-of-type{border-bottom:none}
+.pc .nm{font-weight:600;font-size:14.5px}
+.pc .ro{font-size:12.5px;color:var(--fade)}
+.pc .co{font-size:12.5px;color:var(--ink-soft);word-break:break-all}
+.pc .via{font-size:12px;color:var(--moss);font-weight:600}
+.pc .sp{flex:1}
+.pc .also{font-size:12px;color:var(--oxblood)}
+.pform{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:12px;margin-top:10px}
+.pform .fields{border:none;padding-top:0;margin-top:0}
+.mini{font-size:12px;color:var(--fade);border:1px solid var(--rule);border-radius:3px;padding:2px 7px}
+.mini:hover{color:var(--ink);border-color:var(--ink)}
+.rc .pv{color:var(--moss);font-weight:600}
+.warn{background:var(--paper);border:1px solid var(--amber);border-radius:4px;padding:10px 12px;font-size:13.5px;margin-bottom:13px;color:var(--ink-soft)}
+.warn b{color:var(--amber)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:24px 14px;overflow-y:auto}
+.mbox{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:22px;max-width:560px;width:100%}
+.mbox h2{font-size:25px;margin:0 0 8px}
+.mbox textarea{width:100%;min-height:110px;background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:11px;font-size:15px;resize:vertical}
+.mbox p{font-size:14px;color:var(--ink-soft);margin:0 0 13px;line-height:1.5}
+.boot{padding:50px 0;text-align:center;color:var(--ink-soft);font-size:14.5px}
+.foot{border-top:1px solid var(--rule);margin-top:32px;padding-top:13px;font-size:12.5px;color:var(--fade);display:flex;gap:15px;flex-wrap:wrap}
+
+/* charpente à trois colonnes */
+.shell{display:grid;grid-template-columns:174px minmax(0,1fr) 250px;gap:26px;align-items:start;margin-top:18px}
+@media(max-width:1140px){.shell{grid-template-columns:1fr;gap:20px}}
+.nav,.side{position:sticky;top:12px}
+@media(max-width:1140px){.nav,.side{position:static}}
+.nav h4,.side h4{font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--fade);
+ margin:0 0 9px;font-weight:600;font-family:"IBM Plex Sans",sans-serif}
+.nv{display:flex;flex-direction:column;gap:1px}
+@media(max-width:1140px){.nv{flex-direction:row;flex-wrap:wrap;gap:6px}}
+.nv button{display:flex;align-items:baseline;gap:7px;width:100%;padding:7px 10px;border-radius:3px;
+ font-size:13.5px;color:var(--ink-soft);border-left:2px solid transparent}
+.nv button:hover{background:var(--card);color:var(--ink)}
+.nv button .n{margin-left:auto;font-size:12.5px;color:var(--fade);font-variant-numeric:tabular-nums}
+.nv button.hot{border-left-color:var(--oxblood);color:var(--ink);font-weight:600}
+.nv button.amb{border-left-color:var(--amber)}
+@media(max-width:1140px){.nv button{width:auto;border:1px solid var(--rule)}}
+.side{border-left:1px solid var(--rule);padding-left:18px}
+@media(max-width:1140px){.side{border-left:none;padding-left:0;border-top:1px solid var(--rule);padding-top:16px}}
+.gig{padding:9px 0;border-bottom:1px dotted var(--rule)}
+.gig:last-of-type{border-bottom:none}
+.gig .gn{font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif;font-size:17px;font-weight:600;display:block;line-height:1.15}
+.gig .gd{font-size:12.5px;color:var(--moss);font-weight:600}
+.gig .gp{font-size:12.5px;color:var(--fade)}
+.side .none{font-size:13px;color:var(--ink-soft);line-height:1.55}
+.prio.miss{border-color:var(--amber)}
+.pline .due{color:var(--oxblood);font-weight:600}
+.chk{display:flex;align-items:center;gap:9px;font-size:14px;padding:2px 0}
+.chk input{width:17px;height:17px;accent-color:var(--oxblood);cursor:pointer}
+.chk label{cursor:pointer}
+.star{color:var(--amber);font-size:13px}
+.zones{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.zl{font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--fade);font-weight:600;margin-right:3px}
+.zb{border:1px solid var(--rule);border-radius:3px;padding:4px 9px;font-size:13px;color:var(--ink-soft);
+ display:inline-flex;gap:6px;align-items:baseline}
+.zb:hover{border-color:var(--ink);color:var(--ink)}
+.zb[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.zb .n{font-size:11.5px;opacity:.65;font-variant-numeric:tabular-nums}
+.zb.clear{border-style:dashed;color:var(--amber);border-color:var(--amber)}
+.zt{color:var(--ink-soft);font-weight:600}
+.share{display:flex;gap:11px;align-items:center;flex-wrap:wrap;background:var(--card);
+ border:1px solid var(--oxblood);border-radius:5px;padding:11px 14px;margin-bottom:4px;font-size:13.5px}
+.share span{flex:1;min-width:150px;color:var(--ink-soft)}
+.strip{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px}
+.strip .cp{font-size:12.5px;padding:3px 9px}
+.mrow{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px dotted var(--rule);flex-wrap:wrap}
+.mn{flex:1;min-width:150px;font-weight:600;font-size:14.5px}
+.mn em{display:block;font-style:normal;font-size:12px;color:var(--fade);font-weight:400}
+.mgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;flex:2;min-width:260px}
+.mgrid .mo{border:1px solid var(--rule);border-radius:3px;padding:6px 0;text-align:center;font-size:12px;
+ font-family:"Saira Condensed","Arial Narrow",Helvetica,Arial,sans-serif;font-weight:600;color:var(--ink-soft)}
+.mgrid .mo:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <span class="mark">September&nbsp;Again</span>
+    <span class="sp"></span>
+    <select id="me" title="Qui es-tu ?"></select>
+    <button class="lnk" id="addbtn">+ Ajouter un lieu</button>
+  </div>
+  <div id="boot" class="boot">Chargement…</div>
+  <div id="gate" hidden></div>
+  <div class="shell" id="shell" hidden>
+    <aside class="nav"><h4>Aller à</h4><div class="nv" id="nav"></div></aside>
+    <main id="app"></main>
+    <aside class="side" id="side"></aside>
+  </div>
+</div>
+<div id="modal"></div>
+<script>
+(function(){
+"use strict";
+
+const MEMBERS_DEF=["Spoox","John","PM","Loïc"];
+const MEM=()=>(Array.isArray(settings.members)&&settings.members.length)?settings.members:MEMBERS_DEF;
+const MONTHS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const MSHORT=["jan","fév","mar","avr","mai","juin","juil","aoû","sep","oct","nov","déc"];
+const LINKDEFS=[
+ {k:"epk",     l:"EPK / dossier"},
+ {k:"youtube", l:"YouTube"},
+ {k:"ecoute",  l:"Écoute (Spotify, Bandcamp\u2026)"},
+ {k:"site",    l:"Site"},
+ {k:"insta",   l:"Instagram"},
+ {k:"facebook",l:"Facebook"}
+];
+const CHANNELS=["mail","téléphone","Facebook","Instagram","formulaire","sur place","courrier"];
+const TYPES=["Festival","SMAC","Café-concert","Salle","Asso"];
+const LEAD_MIN=4,LEAD_MAX=8,STALE=45;
+
+/* ===================== configuration ===================== */
+/* Cette page est autonome : un seul fichier, aucune dépendance à installer,
+   elle s'ouvre même par un double-clic. Pour que tout le groupe voie les mêmes
+   données, il lui faut une base : renseigne la config ci-dessous, ou pose-la
+   dans un config.js chargé AVANT ce fichier :
+       window.SA_FIREBASE = { apiKey: "...", projectId: "...", appId: "..." };
+   Sans config, la page fonctionne quand même, mais chacun n'a que sa copie locale. */
+const firebaseConfig = {
+  apiKey: "AIzaSyAftFH6eEe90NZfLFQQIs8vKyz5DeBNc2M",
+  authDomain: "september-again.firebaseapp.com",
+  projectId: "september-again",
+  storageBucket: "september-again.firebasestorage.app",
+  messagingSenderId: "325808739619",
+  appId: "1:325808739619:web:10ce3832bf580b5409a896"
+};
+const FIREBASE_SDK    = "10.12.5";
+
+const GROUPS=[
+ {k:"maintenant", t:"À écrire maintenant",  s:"Échéance proche ou silence prolongé, et on a de quoi les joindre."},
+ {k:"sansadresse",t:"Il manque le contact", s:"Mêmes urgences, mais ni mail ni téléphone au fichier. Ici le travail c'est de trouver l'adresse, pas d'écrire."},
+ {k:"attente",    t:"En attente de réponse",s:"Écrit récemment. Rien à faire pour l'instant."},
+ {k:"plustard",   t:"Mis de côté",          s:"Reviendront d'eux-mêmes."},
+ {k:"regle",      t:"Réglé",                s:"Dates obtenues et abandons."}
+];
+/* Aucune donnée dans ce fichier : les coordonnées vivent dans la base, pas dans
+   la page. Une page vide se remplit par « Importer une sauvegarde ». */
+const SEED = [];
+const SEED_PEOPLE=[];
+
+/* zone géographique : déduite de la ville, pas devinée */
+const CITY_ZONE={
+ "annecy":"74","annemasse":"74","cluses":"74","habère-poche":"74","thorens-glières":"74","bonneville":"74",
+ "ambilly":"74","thonon-les-bains":"74","machilly":"74","thusy":"74",
+ "bourgoin-jallieu":"38","grenoble":"38","ville-sous-anjou":"38","bièvre (38)":"38",
+ "lyon":"69","neuville-sur-saône":"69",
+ "bourg-en-bresse":"01","sergy":"01","saint-maurice-de-gourdans":"01",
+ "yenne":"73","aix-les-bains":"73","dôle":"39","mervans":"71","louhans":"71",
+ "plan-les-ouates":"Genève","perly":"Genève","genève":"Genève","thônex":"Genève","saint-michel d'avully":"Genève",
+ "étagnières":"Vaud","gilly":"Vaud","nyon":"Vaud","lausanne":"Vaud",
+ "veyras (valais)":"Valais","neuchâtel":"Neuchâtel"
+};
+function zoneOf(v){
+  if(v.zone) return v.zone;
+  const z=CITY_ZONE[String(v.city||"").trim().toLowerCase()];
+  return z||"";
+}
+function zoneLabel(z){ return /^\d+$/.test(z) ? z : z; }
+
+/* ===================== état ===================== */
+let db=null;
+let venues=new Map(),exchanges=[],people=new Map();
+let pEdit=null;   // id de la personne en cours d'édition, ou "new"
+let me=localStorage.getItem("sa_me")||"Spoox";
+let openId=null, openFields=false;
+let draft="",draftMsg="";
+let query="";
+let collapsed={attente:true,plustard:true,regle:true};
+let modal=null,addRaw="",addMsg="",addForm=null,addDupe=null;
+let delTarget=null,delPTarget=null;
+let impRaw="",impMsg="",impReplace=false;
+let links={site:"",youtube:"",epk:"",ecoute:"",insta:"",facebook:""};
+let activity=[];              // journal partagé : qui a fait quoi
+let sessionLog=[];            // ce que MOI j'ai changé depuis l'ouverture
+const SETTINGS_DEF={
+  members:MEMBERS_DEF.slice(),
+  boite:"september.again@outlook.fr",
+  pitch:"Je vous écris au nom de September Again, groupe de rock basé à Annecy.",
+  corps:"Nous sommes quatre, nous tournons en Haute-Savoie et en Suisse romande"
+};
+let settings={...SETTINGS_DEF};
+const boite=()=>String(settings.boite||"").trim()||SETTINGS_DEF.boite;
+let monthFilter=null;
+let zoneFilter=null;          // 1..12, "none", ou null
+let prioSort="echeance";       // "echeance" | "silence"
+
+const $=s=>document.querySelector(s);
+
+/* Ouvrir un lien : on passe par un vrai <a> plutôt que window.open, seul moyen
+   fiable quand la page tourne dans un cadre (Claude) comme hors cadre. */
+function normUrl(u){
+  const t=String(u||"").trim();
+  if(!t) return "";
+  if(/^(https?:|mailto:|tel:)/i.test(t)) return t;
+  if(/^[\w.+-]+@[\w-]+\.[\w.]{2,}$/.test(t)) return "mailto:"+t;
+  return "https://"+t.replace(/^\/+/,"");
+}
+function openUrl(u){
+  const h=normUrl(u); if(!h) return false;
+  try{
+    const a=document.createElement("a");
+    a.href=h; a.target="_blank"; a.rel="noopener noreferrer";
+    a.style.display="none"; document.body.appendChild(a);
+    a.click(); setTimeout(()=>a.remove(),0);
+    return true;
+  }catch(e){ try{ window.open(h,"_blank","noopener"); return true; }catch(e2){ return false; } }
+}
+function hostOf(u){
+  try{ return new URL(normUrl(u)).hostname.replace(/^www\./,""); }catch(e){ return String(u||"").slice(0,40); }
+}
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const TODAY=new Date(), iso=d=>d.toISOString().slice(0,10), todayISO=iso(TODAY);
+const days=d=>d?Math.floor((TODAY-new Date(d+"T12:00:00"))/86400000):null;
+const fmt=d=>{if(!d)return"";const p=d.split("-");return (+p[2])+" "+MSHORT[+p[1]-1]+" "+p[0].slice(2);};
+const fmtL=d=>{if(!d)return"";const p=d.split("-");return (+p[2])+" "+MONTHS[+p[1]-1]+" "+p[0];};
+const plus=n=>{const d=new Date(TODAY);d.setDate(d.getDate()+n);return iso(d);};
+const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+function mUntil(m){if(!m)return null;let x=m-(TODAY.getMonth()+1);return x<0?x+12:x;}
+function logsOf(id){return exchanges.filter(e=>e.venueId===id).sort((a,b)=>a.date<b.date?1:-1);}
+function last(id){const l=logsOf(id);return l.length?l[0]:null;}
+function inWin(v){const m=mUntil(v.month);return m!==null&&m>=LEAD_MIN&&m<=LEAD_MAX;}
+function reachable(v){return !!contactOf(v);}
+function snoozed(v){return v.snooze&&v.snooze>todayISO;}
+function dueByHand(v){ return !!(v.relanceFrom&&v.relanceFrom<=todayISO); }
+function waiting(v){ return !!(v.relanceFrom&&v.relanceFrom>todayISO); }
+
+/* le statut ne se saisit plus : il se déduit de l'historique */
+function state(v){
+  if(v.status==="valide") return {k:"valide",l:"Date obtenue"};
+  if(v.status==="mort")   return {k:"mort",l:"Laissé tomber"};
+  const l=last(v.id);
+  if(!l) return {k:"jamais",l:"Jamais contacté"};
+  const d=days(l.date);
+  if(d<=STALE) return {k:"attente",l:"Écrit il y a "+d+" j"};
+  return {k:"silence",l:"Sans réponse depuis "+d+" j"};
+}
+function actionable(v){
+  if(v.status==="valide"||v.status==="mort") return false;
+  if(dueByHand(v)) return true;    // une date posée à la main prime sur ma règle
+  if(waiting(v)) return false;     // date future fixée : je me tais jusque-là
+  if(inWin(v)) return true;
+  const l=last(v.id);
+  return !l || days(l.date)>STALE;
+}
+function group(v){
+  if(v.status==="valide"||v.status==="mort") return "regle";
+  if(waiting(v)&&!snoozed(v)) return "attente";
+  if(snoozed(v)) return "plustard";
+  if(!actionable(v)) return "attente";
+  return reachable(v) ? "maintenant" : "sansadresse";
+}
+function why(v){
+  if(dueByHand(v)) return "<b>Relance fixée au "+fmt(v.relanceFrom)+"</b> — c\u2019est passé.";
+  if(waiting(v)) return "Relance programmée au "+fmt(v.relanceFrom)+".";
+  if(inWin(v)) return "<b>Édition en "+MONTHS[v.month-1]+"</b> — écrire dans les prochaines semaines.";
+  const l=last(v.id);
+  if(!l) return "Jamais contacté.";
+  return "Silence depuis "+days(l.date)+" jours.";
+}
+function rank(v){
+  if(dueByHand(v)) return [0,-days(v.relanceFrom)];
+  if(inWin(v)) return [0, mUntil(v.month)];
+  const l=last(v.id);
+  if(!l) return [1, 0];
+  return [2, -days(l.date)];
+}
+
+/* ===================== rendu ===================== */
+function peopleOf(id){
+  return [...people.values()].filter(p=>(p.venueIds||[]).indexOf(id)>=0)
+    .sort((a,b)=>a.name.localeCompare(b.name,"fr"));
+}
+function pReach(p){ return !!((p.email&&p.email.trim())||(p.phone&&p.phone.trim())); }
+function pContact(p){ const m=(p.email||"").trim(),t=(p.phone||"").trim(); return m||t; }
+
+function contactOf(v){
+  const m=(v.email||"").trim(), t=(v.phone||"").trim();
+  if(m) return {k:"mail",v:m};
+  if(t) return {k:"tel",v:t};
+  const p=peopleOf(v.id).find(pReach);         // souvent la vraie porte d'entrée
+  if(p) return {k:"personne",v:pContact(p),who:p.name,via:p.via||""};
+  return null;
+}
+
+function zoneBarHTML(){
+  const all=[...venues.values()].filter(v=>v.status!=="mort");
+  const c={}; all.forEach(v=>{const z=zoneOf(v)||"?"; c[z]=(c[z]||0)+1;});
+  const keys=Object.keys(c).sort((a,b)=>{
+    if(a==="?") return 1; if(b==="?") return -1;
+    if(c[b]!==c[a]) return c[b]-c[a];
+    return a.localeCompare(b,"fr");
+  });
+  if(!keys.length) return "";
+  return '<div class="zones"><span class="zl">Secteur</span>'+
+    keys.map(z=>'<button class="zb" data-zone="'+esc(z)+'" aria-pressed="'+(zoneFilter===z)+'">'+
+      esc(zoneLabel(z))+'<span class="n">'+c[z]+'</span></button>').join("")+
+    (zoneFilter?'<button class="zb clear" data-a="clearzone">tout</button>':'')+
+    '</div>';
+}
+
+function timelineHTML(){
+  const all=[...venues.values()], cm=TODAY.getMonth()+1;
+  let h='<div class="tl">';
+  for(let m=1;m<=12;m++){
+    const inM=all.filter(v=>v.month===m), w=inM.some(inWin);
+    h+='<button class="tlc'+(m===cm?" now":"")+(w?" w":"")+'" data-mo="'+m+'" aria-pressed="'+(monthFilter===m)+'" '+
+       'title="'+inM.length+' lieu(x) en '+MONTHS[m-1]+'">'+
+       '<span class="tlb">'+inM.slice(0,8).map(v=>'<i class="'+(v.status==="valide"?"ok":v.status==="mort"?"dead":inWin(v)?"w":"")+'"></i>').join("")+'</span>'+
+       '<span class="tln">'+(inM.length||"")+'</span><span class="tll">'+MSHORT[m-1]+'</span></button>';
+  }
+  const none=all.filter(v=>!v.month&&v.status!=="mort");
+  h+='<button class="tlc none" data-mo="none" aria-pressed="'+(monthFilter==="none")+'" title="Sans mois d\u2019édition">'+
+     '<span class="tlb">'+none.slice(0,8).map(()=>'<i></i>').join("")+'</span>'+
+     '<span class="tln">'+(none.length||"")+'</span><span class="tll">?</span></button></div>';
+
+  const w=all.filter(inWin).length, auto=all.filter(v=>v.monthAuto).length;
+  h+='<p class="snote">'+(w?'<b>'+w+' festival'+(w>1?'s':'')+'</b> dans la fenêtre d\u2019écriture. ':'')+
+     (auto?auto+' mois en orange restent à confirmer. ':'')+
+     'Clique un mois pour ne voir que lui.'+
+     (monthsTodo().length?' <button class="mini" data-a="months">Compléter les '+monthsTodo().length+' mois manquants</button>':'')+'</p>';
+  if(monthFilter!==null)
+    h+='<div class="filtered"><span>Filtré sur '+(monthFilter==="none"?"les lieux sans mois":MONTHS[monthFilter-1])+'</span>'+
+       '<button class="sortb" data-a="clearmo">Tout afficher</button></div>';
+  h+='<p class="snote" style="margin-top:6px">Croise un mois et un secteur pour préparer une tournée cohérente.</p>';
+  return h;
+}
+
+/* encart prioritaire : épinglés à la main + échéances proches joignables */
+function prioList(){
+  const all=[...venues.values()].filter(v=>v.status!=="mort"&&v.status!=="valide"&&!snoozed(v));
+  const set=new Map();
+  all.filter(v=>v.pin).forEach(v=>set.set(v.id,v));            // priorité décidée par vous
+  all.filter(dueByHand).forEach(v=>set.set(v.id,v));           // date posée à la main, échue
+  all.filter(v=>inWin(v)&&!waiting(v)).forEach(v=>set.set(v.id,v));
+  const l=[...set.values()];
+  l.sort((a,b)=>{
+    if(!!b.pin!==!!a.pin) return a.pin?-1:1;
+    if(prioSort==="echeance"){
+      const ad=dueByHand(a), bd=dueByHand(b);
+      if(ad!==bd) return ad?-1:1;
+      const x=mUntil(a.month), y=mUntil(b.month);
+      if(x===null&&y!==null) return 1; if(y===null&&x!==null) return -1;
+      if(x!==null&&x!==y) return x-y;
+    }else{
+      const la=last(a.id), lb=last(b.id);
+      const da=la?days(la.date):9999, dbb=lb?days(lb.date):9999;
+      if(da!==dbb) return dbb-da;
+    }
+    return a.name.localeCompare(b.name,"fr");
+  });
+  return l;
+}
+
+function missingList(){
+  return [...venues.values()]
+    .filter(v=>v.status!=="mort"&&v.status!=="valide"&&!reachable(v)&&(v.pin||actionable(v)))
+    .sort((a,b)=>{
+      if(!!b.pin!==!!a.pin) return a.pin?-1:1;
+      const x=mUntil(a.month), y=mUntil(b.month);
+      if(x===null&&y!==null) return 1; if(y===null&&x!==null) return -1;
+      if(x!==null&&x!==y) return x-y;
+      return a.name.localeCompare(b.name,"fr");
+    });
+}
+
+function gigs(){
+  return [...venues.values()].filter(v=>v.status==="valide")
+    .sort((a,b)=>(a.gigDate||"9999")<(b.gigDate||"9999")?-1:1);
+}
+
+function linkLine(){
+  const set=LINKDEFS.filter(d=>links[d.k]&&links[d.k].trim());
+  return set.length? set.map(d=>d.l+" : "+links[d.k].trim()).join("\n") : "[colle ici vos liens]";
+}
+function greet(v){
+  const p=peopleOf(v.id).find(x=>x.name&&/^[A-ZÉÈÀ]/.test(x.name));
+  if(p) return "Bonjour "+p.name.split(" ")[0]+",";
+  if(v.contact&&/^[A-ZÉÈÀ]/.test(v.contact)) return "Bonjour "+v.contact.split(" ")[0]+",";
+  return "Bonjour,";
+}
+function tplFull(v){
+  const lg=logsOf(v.id), l=lg[0];
+  const relance = l && days(l.date)>60;
+  const intro = relance
+    ? "Je me permets de revenir vers vous : nous vous avions écrit le "+fmtL(l.date)+" et je ne suis pas sûr que le message vous soit parvenu."
+    : (settings.pitch||SETTINGS_DEF.pitch);
+  const p=peopleOf(v.id).find(x=>x.via);
+  const pont = p ? "\n\n"+p.via+", de notre groupe, connaît "+p.name+" — c'est par là que nous arrivons jusqu'à vous." : "";
+  const quand = v.month ? "\n\nNous visons l'édition de "+MONTHS[v.month-1]+"." : "";
+  return "Objet : September Again \u2014 proposition de date"+(v.city?" \u00E0 "+v.city:"")+"\n\n"+
+    greet(v)+"\n\n"+intro+pont+
+    "\n\n"+(settings.corps||SETTINGS_DEF.corps)+", et "+v.name+" fait partie des lieux où nous aimerions jouer."+quand+
+    "\n\nDe quoi vous faire une idée :\n"+linkLine()+
+    "\n\nEst-ce que vous prenez des candidatures en ce moment, et sous quelle forme ?\n\nMerci pour votre temps,\n"+me+"\nSeptember Again \u2014 "+boite();
+}
+function tplBlank(v){
+  return "Objet : \n\n"+greet(v)+"\n\n\n\n"+linkLine()+"\n\n"+me+"\nSeptember Again \u2014 "+boite();
+}
+
+function linkStrip(){
+  const set=LINKDEFS.filter(d=>links[d.k]&&links[d.k].trim());
+  if(!set.length) return '<p class="hint">Aucun lien enregistré. <button class="mini" data-a="links">Les renseigner une bonne fois</button></p>';
+  return '<div class="strip">'+set.map(d=>
+      '<a class="cp go" href="'+esc(normUrl(links[d.k]))+'" target="_blank" rel="noopener noreferrer">'+esc(d.l)+' \u2197</a>'+
+      '<button class="cp" data-copy="'+esc(links[d.k].trim())+'">copier</button>').join("")+
+    '<button class="mini" data-a="links">modifier</button></div>';
+}
+
+function pinBtn(v){
+  return '<button class="pin'+(v.pin?" on":"")+'" data-pin="'+v.id+'" title="'+(v.pin?"Retirer des prioritaires":"Marquer prioritaire")+'">'+(v.pin?"\u2605":"\u2606")+'</button>';
+}
+
+function prioHTML(){
+  const l=prioList();
+  let h='<div class="prio" id="s-prio"><div class="ph"><h2>À relancer là</h2><span class="n">'+l.length+'</span><span class="sp"></span>'+
+    '<button class="sortb" data-a="sort-echeance" aria-pressed="'+(prioSort==="echeance")+'">par échéance</button>'+
+    '<button class="sortb" data-a="sort-silence" aria-pressed="'+(prioSort==="silence")+'">par silence</button></div>';
+  if(!l.length) h+='<p class="empty">Rien d\u2019urgent. Coche « prioritaire » sur un lieu, ou pose-lui une date de relance, pour le faire remonter ici.</p>';
+  else{
+    h+=l.slice(0,10).map(v=>{
+      const c=contactOf(v), lg=last(v.id);
+      return '<div class="pline">'+pinBtn(v)+
+        '<button class="pn" data-goto="'+v.id+'">'+esc(v.name)+'</button>'+
+        '<span class="pw">'+
+          (dueByHand(v)?'<span class="due">relance fixée au '+fmt(v.relanceFrom)+'</span> \u00B7 ':(v.month?'<b>'+MONTHS[v.month-1]+'</b> \u00B7 ':''))+
+          (lg?'silence '+days(lg.date)+' j':'jamais contacté')+
+          (c?' \u00B7 '+esc(c.v):' \u00B7 <b>aucun contact</b>')+'</span>'+
+        (c?'<button class="b o s" data-write="'+v.id+'">Rédiger</button>'
+          :'<button class="b o s" data-goto="'+v.id+'">Trouver le contact</button>')+'</div>';
+    }).join("");
+    if(l.length>10) h+='<p class="empty">+ '+(l.length-10)+' autres plus bas.</p>';
+  }
+  return h+'</div>';
+}
+
+function digest(nDays){
+  const acts=sinceDays(nDays);
+  const pr=prioList(), miss=missingList(), gg=gigs();
+  const par={}; acts.forEach(a=>{par[a.who]=(par[a.who]||0)+1;});
+  let t="September Again \u2014 point démarchage du "+fmtL(todayISO)+"\n";
+  t+="=".repeat(46)+"\n\n";
+
+  t+="CE QUI A ÉTÉ FAIT ces "+nDays+" derniers jours\n";
+  if(!acts.length) t+="  Rien. Personne n'a touché au fichier.\n";
+  else{
+    t+="  "+Object.keys(par).map(k=>k+" : "+par[k]).join("   ")+"\n\n";
+    acts.slice(0,20).forEach(a=>{ t+="  \u00B7 "+a.who+" \u2014 "+a.what+"\n"; });
+    if(acts.length>20) t+="  ... et "+(acts.length-20)+" autres.\n";
+  }
+
+  t+="\nÀ RELANCER MAINTENANT ("+pr.length+")\n";
+  if(!pr.length) t+="  Rien d'urgent.\n";
+  else pr.slice(0,10).forEach(v=>{
+    const c=contactOf(v), l=last(v.id);
+    t+="  \u00B7 "+v.name+(v.city?" ("+v.city+")":"")+(v.pin?" \u2605":"")+
+       (v.month?" \u2014 édition en "+MONTHS[v.month-1]:"")+
+       (l?", silence "+days(l.date)+" j":", jamais contacté")+
+       (c?"":"  [AUCUN CONTACT]")+"\n";
+  });
+
+  t+="\nCONTACT À TROUVER ("+miss.length+")\n";
+  if(!miss.length) t+="  Tout le monde est joignable.\n";
+  else{
+    t+="  "+miss.slice(0,12).map(v=>v.name).join(", ")+(miss.length>12?", ...":"")+"\n";
+    t+="  Tant que personne ne retrouve ces adresses, ces lieux sont hors jeu.\n";
+  }
+
+  t+="\nCONCERTS ACTÉS ("+gg.length+")\n";
+  t+= gg.length ? gg.map(v=>"  \u00B7 "+v.name+" \u2014 "+(v.gigDate?fmtL(v.gigDate):"date à préciser")).join("\n")+"\n"
+                : "  Aucun.\n";
+
+  t+="\n"+venues.size+" lieux \u00B7 "+people.size+" personnes \u00B7 "+exchanges.length+" échanges consignés\n";
+  return t;
+}
+
+function shareText(){
+  let t="September Again \u2014 "+me+" a mis le fichier à jour\n\n";
+  sessionLog.forEach(a=>{ t+="  \u00B7 "+a.what+"\n"; });
+  t+="\nÉtat : "+prioList().length+" à relancer, "+missingList().length+" sans contact, "+gigs().length+" concert(s) acté(s).\n";
+  return t;
+}
+
+function monthsTodo(){
+  return [...venues.values()].filter(v=>v.type==="Festival"&&!v.month&&v.status!=="mort")
+    .sort((a,b)=>a.name.localeCompare(b.name,"fr"));
+}
+function monthsFillHTML(){
+  const l=monthsTodo();
+  let h='<div class="modal" id="ovl"><div class="mbox" style="max-width:660px"><h2>Compléter les mois</h2>';
+  if(!l.length){
+    h+='<p>Tous les festivals ont leur mois d\u2019édition. Rien à faire ici.</p>'+
+       '<div class="acts"><button class="b" data-a="close">Fermer</button></div></div></div>';
+    return h;
+  }
+  h+='<p>'+l.length+' festival'+(l.length>1?'s':'')+' sans date d\u2019édition. Un clic par ligne, la ligne disparaît. '+
+     'Tant qu\u2019un mois manque, le lieu ne remontera jamais au bon moment.</p>';
+  h+=l.map(v=>'<div class="mrow"><span class="mn">'+esc(v.name)+
+      '<em>'+esc([v.city,v.country==="CH"?"Suisse":""].filter(Boolean).join(" \u00B7 ")||"lieu non renseigné")+'</em></span>'+
+      '<span class="mgrid">'+MONTHS.map((m,i)=>
+        '<button class="mo" data-setm="'+v.id+':'+(i+1)+'" title="'+m+'">'+MSHORT[i]+'</button>').join("")+
+      '</span></div>').join("");
+  h+='<div class="acts" style="margin-top:15px"><button class="b" data-a="close">Terminé</button></div>'+
+     '<p class="hint">Un festival qui n\u2019a pas de date fixe ? Laisse-le, et sers-toi plutôt de « Relancer à partir du » sur sa fiche.</p>'+
+     '</div></div>';
+  return h;
+}
+
+function navHTML(){
+  const all=[...venues.values()];
+  const items=[{id:"s-prio",l:"À relancer là",n:prioList().length,c:"hot"}]
+    .concat(GROUPS.map(g=>({id:"g-"+g.k,l:g.t,n:all.filter(v=>group(v)===g.k).length,c:""})));
+  return items.map(i=>'<button class="'+i.c+'" data-jump="'+i.id+'">'+i.l+'<span class="n">'+i.n+'</span></button>').join("")+
+    (monthsTodo().length?'<button class="amb" data-a="months" style="margin-top:10px">Compléter les mois<span class="n">'+monthsTodo().length+'</span></button>':'')+
+    '<button data-a="weekly"'+(monthsTodo().length?'':' style="margin-top:10px"')+'>Bilan de la semaine</button>'+
+    '<button data-a="links">Le groupe \u00B7 mail, liens</button>'+
+    '<button data-a="open">+ Ajouter un lieu</button>'+
+    '<button data-a="data">Sauvegarde \u00B7 restauration</button>';
+}
+
+function sideHTML(){
+  const l=gigs();
+  let h='<h4>Concerts actés</h4>';
+  if(!l.length) h+='<p class="none">Aucun pour l\u2019instant.<br><br>Un lieu arrive ici dès que tu cliques « On a la date » sur sa fiche.</p>';
+  else h+=l.map(v=>'<div class="gig"><button class="gn" data-goto="'+v.id+'">'+esc(v.name)+'</button><br>'+
+      '<span class="gd">'+(v.gigDate?fmtL(v.gigDate):"date à préciser")+'</span>'+
+      '<span class="gp"> \u00B7 '+esc(v.city||v.type)+'</span></div>').join("");
+  const pins=[...venues.values()].filter(v=>v.pin&&v.status!=="valide"&&v.status!=="mort");
+  h+='<h4 style="margin-top:22px">Vos prioritaires</h4>';
+  h+= pins.length
+    ? pins.sort((a,b)=>a.name.localeCompare(b.name,"fr")).map(v=>'<div class="gig">'+
+        '<button class="gn" data-goto="'+v.id+'">'+esc(v.name)+'</button><br>'+
+        '<span class="gp">'+esc(v.city||v.type)+(reachable(v)?'':' \u00B7 <span style="color:var(--amber)">contact manquant</span>')+'</span></div>').join("")
+    : '<p class="none">Aucun lieu coché prioritaire.</p>';
+  return h;
+}
+
+
+function rowHTML(v){
+  const l=last(v.id), st=state(v), op=openId===v.id, c=contactOf(v);
+  const mo=v.month?'<span class="'+(v.monthAuto?'auto':'')+'" title="'+(v.monthAuto?'Mois déduit automatiquement':'')+'">'+MONTHS[v.month-1]+'</span>':'';
+  const z=zoneOf(v);
+  const showZ = z && norm(z)!==norm(v.city);
+  const bits=[esc(v.type),v.city?esc(v.city):"",showZ?'<span class="zt">'+esc(zoneLabel(z))+'</span>':"",mo].filter(Boolean);
+  const site = v.link&&v.link.trim()
+    ? '<a class="cp go" href="'+esc(normUrl(v.link))+'" target="_blank" rel="noopener noreferrer" title="'+esc(v.link.trim())+'">'+esc(hostOf(v.link))+' \u2197</a>'
+    : '';
+  const contact = c
+    ? '<span class="ct">'+(c.k==="tel"?"\u260E":"\u2709")+' '+esc(c.v)+'</span>'+
+      (c.who?'<span class="pv">'+esc(c.who)+(c.via?" (via "+esc(c.via)+")":"")+'</span>':'')+
+      '<button class="cp" data-copy="'+esc(c.v)+'">copier</button>'+site
+    : '<span class="no">\u26A0 aucun contact</span>'+site;
+  return '<div class="row" role="button" tabindex="0" data-v="'+v.id+'" aria-expanded="'+op+'">'+
+    '<span><span class="rn">'+esc(v.name)+'</span>'+
+      '<span class="rp">'+bits.join(" \u00B7 ")+'</span>'+
+      '<span class="rc">'+contact+'</span></span>'+
+    '<span class="rw">'+why(v)+'</span>'+
+    '<span class="rl"><button class="pin'+(v.pin?" on":"")+'" data-pin="'+v.id+'" title="'+(v.pin?"Détacher":"Épingler en haut")+'">'+(v.pin?"\u2605":"\u2606")+'</button><br>'+
+      (l?esc(l.who)+" \u00B7 "+fmt(l.date):esc(st.l))+'</span>'+
+  '</div>'+(op?panelHTML(v):"");
+}
+
+function panelHTML(v){
+  const lg=logsOf(v.id), st=state(v);
+  let h='<div class="panel">';
+  if(!reachable(v)) h+='<div class="warn"><b>Ni mail ni téléphone au fichier.</b> Renseigne-en un ci-dessous et ce lieu rejoint « À écrire maintenant ».</div>';
+
+  const F=(id,lab,val,ph)=>'<div class="f"><label for="'+id+'">'+lab+'</label><input id="'+id+'" data-k="'+id.slice(2)+'" value="'+esc(val)+'"'+(ph?' placeholder="'+ph+'"':'')+'></div>';
+  h+='<div class="fields" style="border:none;padding-top:0;margin-top:0">'+
+    F("e-email","Mail",v.email,"prog@…")+F("e-phone","Téléphone",v.phone)+
+    F("e-contact","Personne à contacter",v.contact)+
+    '<div class="f"><label for="e-link">Lien'+
+      (v.link&&v.link.trim()?' \u00B7 <a class="go" href="'+esc(normUrl(v.link))+'" target="_blank" rel="noopener noreferrer">ouvrir \u2197</a>':'')+
+      '</label><input id="e-link" data-k="link" value="'+esc(v.link)+'" placeholder="site, page Facebook\u2026"></div>'+
+    F("e-city","Ville",v.city)+
+    F("e-zone","Secteur",v.zone||zoneOf(v),"département ou canton")+
+    '</div>';
+
+  h+='<div class="chk"><input type="checkbox" id="e-pin" '+(v.pin?"checked":"")+'>'+
+     '<label for="e-pin">Prioritaire — on veut y jouer, quoi qu\u2019il arrive</label></div>'+
+     '<div class="fields" style="border:none;padding-top:6px;margin-top:0">'+
+       '<div class="f"><label for="e-rel">Relancer à partir du</label>'+
+       '<input type="date" id="e-rel" data-k="relanceFrom" value="'+esc(v.relanceFrom||"")+'"></div>'+
+       (v.status==="valide"?'<div class="f"><label for="e-gig">Date du concert</label>'+
+         '<input type="date" id="e-gig" data-k="gigDate" value="'+esc(v.gigDate||"")+'"></div>':'')+
+     '</div>';
+  h+='<div class="acts" style="margin-top:12px"><button class="b o s" data-a="fields">'+
+     (openFields?"Masquer le reste":"Modifier nom, mois, type, référent\u2026")+'</button></div>';
+
+  if(openFields){
+    h+='<div class="fields">'+
+      F("e-name","Nom",v.name)+
+      '<div class="f"><label for="e-type">Type</label><select id="e-type" data-k="type">'+TYPES.map(t=>'<option'+(v.type===t?' selected':'')+'>'+t+'</option>').join("")+'</select></div>'+
+      '<div class="f"><label for="e-month">Mois de l\u2019édition</label><select id="e-month" data-k="month"><option value="">— inconnu —</option>'+
+        MONTHS.map((m,i)=>'<option value="'+(i+1)+'"'+(v.month===i+1?' selected':'')+'>'+m+'</option>').join("")+'</select></div>'+
+      '<div class="f"><label for="e-country">Pays</label><select id="e-country" data-k="country"><option value="FR"'+(v.country!=="CH"?' selected':'')+'>France</option><option value="CH"'+(v.country==="CH"?' selected':'')+'>Suisse</option></select></div>'+
+      '<div class="f"><label for="e-owner">Référent</label><select id="e-owner" data-k="owner">'+MEM().map(m=>'<option'+(v.owner===m?' selected':'')+'>'+m+'</option>').join("")+'</select></div>'+
+      '<div class="f" style="grid-column:1/-1"><label for="e-notes">Ce qu\u2019il faut savoir</label><textarea id="e-notes" data-k="notes" rows="2">'+esc(v.notes)+'</textarea></div>'+
+    '</div>';
+  }else if(v.notes){ h+='<p class="pnote" style="margin:14px 0 0">'+esc(v.notes)+'</p>'; }
+
+  h+=peopleBlock(v);
+  h+='<div style="border-top:1px solid var(--rule);margin-top:15px;padding-top:14px"></div>';
+  h+= lg.length ? '<ul class="log">'+lg.map(e=>'<li><span class="w">'+fmt(e.date)+(e.guessed?'<em>année ?</em>':'')+'</span>'+
+        '<span class="t"><span class="who">'+esc(e.who)+'</span> \u00B7 '+esc(e.channel)+'<br>'+esc(e.note)+'</span>'+
+        '<button class="del" data-x="'+e.id+'" title="Supprimer">\u00D7</button></li>').join("")+'</ul>'
+      : '<p class="hint" style="margin:0 0 12px">Aucun échange consigné.</p>';
+
+  if(draft){
+    const c=contactOf(v);
+    h+='<div class="draft">'+linkStrip()+
+      '<textarea id="dbox" spellcheck="true">'+esc(draft)+'</textarea><div class="acts" style="margin-top:10px">'+
+      '<button class="b" data-a="outlook">Ouvrir dans '+esc(mailLabel())+'</button>'+
+      (mailHost()?'<button class="b o" data-a="mailto">Mon client mail</button>':'')+
+      '<button class="b o" data-a="sent">Copier et consigner</button>'+
+      '<button class="b o s" data-a="tpl-full">Repartir du modèle</button>'+
+      '<button class="b o s" data-a="nodraft">Fermer</button>'+
+      '</div>'+
+      (c&&c.k!=="mail"?'<p class="hint">Pas d\u2019adresse mail ici, seulement '+esc(c.v)+' — le destinataire sera vide.</p>':'')+
+      '<p class="msg'+(draftMsg.charAt(0)==="!"?" err":"")+'">'+esc(draftMsg.replace(/^!/,""))+'</p></div>';
+  }else{
+    h+='<div class="addrow"><input type="date" id="x-date" value="'+todayISO+'">'+
+       '<select id="x-chan">'+CHANNELS.map(c=>'<option'+(c==="mail"?' selected':'')+'>'+c+'</option>').join("")+'</select>'+
+       '<input class="n2" id="x-note" placeholder="Consigner ce qui s\u2019est passé"></div>'+
+       '<div class="acts">'+
+       '<button class="b" data-a="tpl-full">Modèle pré-rempli</button>'+
+       '<button class="b o" data-a="tpl-blank">Modèle vide</button>'+
+       '<button class="b o s" data-a="addlog">Consigner</button>'+
+       (st.k!=="valide"?'<button class="b o s" data-a="won">On a la date</button>':'<button class="b o s" data-a="reopen">Rouvrir</button>')+
+       (st.k!=="mort"?'<button class="b o s" data-a="later">Plus tard</button><button class="b o s" data-a="drop">Laisser tomber</button>'
+                    :'<button class="b o s" data-a="reopen">Rouvrir</button>')+
+       '<span class="sp"></span><button class="b o s danger" data-a="askdel">Supprimer</button>'+
+       '</div>'+
+       '<p class="hint" style="margin:8px 0 0">« Laisser tomber » garde la trace de ce qui a été tenté. « Supprimer » efface le lieu, ses échanges et le retire des personnes \u2014 pour ceux qui n\u2019existent plus.</p>';
+  }
+  return h+'</div>';
+}
+
+function peopleBlock(v){
+  const list=peopleOf(v.id);
+  let h='<div class="ppl"><h4>Personnes</h4>';
+  if(!list.length && pEdit!=="new") h+='<p class="hint" style="margin:0 0 9px">Aucune. Souvent c\u2019est pourtant la porte d\u2019entrée la plus simple.</p>';
+  list.forEach(p=>{
+    if(pEdit===p.id){ h+=personForm(p,v.id); return; }
+    const others=(p.venueIds||[]).filter(x=>x!==v.id).map(x=>venues.get(x)).filter(Boolean);
+    h+='<div class="pc">'+
+      '<span class="nm">'+esc(p.name)+'</span>'+
+      (p.role?'<span class="ro">'+esc(p.role)+'</span>':'')+
+      (pContact(p)?'<span class="co">'+esc(pContact(p))+'</span><button class="cp" data-copy="'+esc(pContact(p))+'">copier</button>':'<span class="ro">pas de coordonnées</span>')+
+      (p.via?'<span class="via">via '+esc(p.via)+'</span>':'')+
+      '<span class="sp"></span>'+
+      (others.length?'<span class="also">aussi : '+others.map(o=>esc(o.name)).join(", ")+'</span>':'')+
+      '<button class="mini" data-pedit="'+p.id+'">modifier</button>'+
+      '<button class="mini" data-punlink="'+p.id+'">détacher</button>'+
+      '<button class="mini" data-pdel="'+p.id+'">supprimer</button>'+
+    '</div>';
+  });
+  if(pEdit==="new") h+=personForm(null,v.id);
+  else{
+    const free=[...people.values()].filter(p=>(p.venueIds||[]).indexOf(v.id)<0).sort((a,b)=>a.name.localeCompare(b.name,"fr"));
+    h+='<div class="acts" style="margin-top:10px"><button class="b o s" data-a="pnew">+ Ajouter une personne</button>'+
+      (free.length?'<select class="mini" id="plink" style="padding:5px 8px"><option value="">rattacher quelqu\u2019un d\u2019existant…</option>'+
+        free.map(p=>'<option value="'+p.id+'">'+esc(p.name)+(p.role?" — "+esc(p.role):"")+'</option>').join("")+'</select>':'')+
+      '</div>';
+  }
+  return h+'</div>';
+}
+
+function personForm(p,venueId){
+  const f=p||{name:"",role:"",email:"",phone:"",via:"",notes:""};
+  const F=(id,l,v,ph)=>'<div class="f"><label for="'+id+'">'+l+'</label><input id="'+id+'" value="'+esc(v)+'"'+(ph?' placeholder="'+ph+'"':'')+'></div>';
+  return '<div class="pform"><div class="fields">'+
+    F("p-name","Nom",f.name,"prénom nom")+
+    F("p-role","Son rôle",f.role,"programmateur, bénévole, ami…")+
+    F("p-email","Mail",f.email)+F("p-phone","Téléphone",f.phone)+
+    '<div class="f"><label for="p-via">Qui la connaît</label><select id="p-via">'+
+      '<option value="">personne en particulier</option>'+
+      MEM().map(m=>'<option'+(f.via===m?' selected':'')+'>'+m+'</option>').join("")+
+      '<option'+(f.via==="quelqu\u2019un d\u2019autre"?' selected':'')+'>quelqu\u2019un d\u2019autre</option></select></div>'+
+    '<div class="f" style="grid-column:1/-1"><label for="p-notes">Ce qu\u2019il faut savoir sur elle</label>'+
+      '<input id="p-notes" value="'+esc(f.notes)+'" placeholder="comment on la connaît, ce qu\u2019elle peut faire"></div>'+
+    '</div><div class="acts" style="margin-top:10px">'+
+      '<button class="b o s" data-psave="'+(p?p.id:"new")+'" data-pv="'+venueId+'">Enregistrer</button>'+
+      '<button class="b o s" data-a="pcancel">Annuler</button></div></div>';
+}
+
+function appHTML(){
+  let all=[...venues.values()];
+  if(query.trim()){ const q=query.toLowerCase();
+    all=all.filter(v=>(v.name+" "+v.city+" "+zoneOf(v)+" "+v.type+" "+(v.contact||"")+" "+(v.email||"")+" "+(v.notes||"")).toLowerCase().includes(q)); }
+  if(monthFilter==="none") all=all.filter(v=>!v.month);
+  else if(monthFilter!==null) all=all.filter(v=>v.month===monthFilter);
+  if(zoneFilter) all=all.filter(v=>(zoneOf(v)||"?")===zoneFilter);
+
+  let h="";
+  if(sessionLog.length)
+    h+='<div class="share"><span><b>'+sessionLog.length+' changement'+(sessionLog.length>1?'s':'')+'</b> depuis que tu as ouvert la page.</span>'+
+       '<button class="b o s" data-a="share">Partager par mail</button>'+
+       '<button class="mini" data-a="sharedone">plus tard</button></div>';
+  h+=timelineHTML()+zoneBarHTML()+prioHTML()+
+    '<div class="bar2"><input class="q" id="q" placeholder="Chercher un nom, une ville, une adresse…" value="'+esc(query)+'"></div>';
+
+  GROUPS.forEach(g=>{
+    const list=all.filter(v=>group(v)===g.k).sort((a,b)=>{
+      if(!!b.pin!==!!a.pin) return a.pin?-1:1;
+      const [x1,y1]=rank(a),[x2,y2]=rank(b);
+      if(x1!==x2) return x1-x2; if(y1!==y2) return y1-y2;
+      return a.name.localeCompare(b.name,"fr");
+    });
+    if(!list.length&&(g.k==="plustard"||g.k==="regle")) return;
+    const col=collapsed[g.k];
+    h+='<section class="grp" id="g-'+g.k+'"><button class="ghead" data-g="'+g.k+'">'+
+       '<h2>'+g.t+'</h2><span class="n">'+list.length+'</span><span class="gs">'+(col?"afficher":"masquer")+'</span></button>'+
+       (col?'':'<p class="gsub">'+g.s+'</p><div class="rows">'+
+         (list.length?list.map(rowHTML).join(""):'<p class="hint" style="padding:16px 11px">Personne ici.</p>')+'</div>')+
+       '</section>';
+  });
+
+  h+='<div class="foot"><span>'+venues.size+' lieux \u00B7 '+people.size+' personnes \u00B7 '+exchanges.length+' échanges \u00B7 '+
+     (dbMode==="local"?'<b style="color:var(--amber)">'+dbLabel()+'</b>':esc(dbLabel()))+'</span>'+
+     '<span><button class="lnk" data-a="links">'+esc(boite())+'</button></span><button class="lnk" data-a="data">Sauvegarde</button></div>';
+  return h;
+}
+
+/* ===================== ajout ===================== */
+function modalHTML(){
+  if(modal==="links"){
+    return '<div class="modal" id="ovl"><div class="mbox"><h2>Le groupe</h2>'+
+      '<p>Ce qui est ici est partagé par tout le monde et se glisse tout seul dans les modèles de mail.</p>'+
+      '<div class="fields" style="border:none;padding-top:0;margin-top:0">'+
+        '<div class="f" style="grid-column:1/-1"><label for="s-membres">Membres du groupe</label>'+
+          '<input id="s-membres" value="'+esc(MEM().join(", "))+'" placeholder="s\u00E9par\u00E9s par des virgules"></div>'+
+        '<div class="f" style="grid-column:1/-1"><label for="s-boite">Adresse mail du groupe</label>'+
+          '<input id="s-boite" value="'+esc(settings.boite||"")+'" placeholder="'+esc(SETTINGS_DEF.boite)+'"></div>'+
+        '<div class="f" style="grid-column:1/-1"><label for="s-pitch">Première phrase du mail</label>'+
+          '<input id="s-pitch" value="'+esc(settings.pitch||"")+'" placeholder="'+esc(SETTINGS_DEF.pitch)+'"></div>'+
+        '<div class="f" style="grid-column:1/-1"><label for="s-corps">Phrase de présentation</label>'+
+          '<input id="s-corps" value="'+esc(settings.corps||"")+'" placeholder="'+esc(SETTINGS_DEF.corps)+'"></div>'+
+      '</div>'+
+      '<h2 style="margin-top:20px">Liens</h2>'+
+      '<div class="fields" style="border:none;padding-top:0;margin-top:0">'+
+        LINKDEFS.map(d=>'<div class="f" style="grid-column:1/-1"><label for="l-'+d.k+'">'+d.l+
+          (links[d.k]&&links[d.k].trim()?' \u00B7 <a class="go" href="'+esc(normUrl(links[d.k]))+'" target="_blank" rel="noopener noreferrer">ouvrir \u2197</a>':'')+
+          '</label><input id="l-'+d.k+'" value="'+esc(links[d.k]||"")+'" placeholder="https://…"></div>').join("")+
+      '</div><div class="acts" style="margin-top:15px">'+
+      '<button class="b" data-a="lsave">Enregistrer</button><button class="b o" data-a="close">Annuler</button></div>'+
+      '<p class="hint">L\u2019adresse sert au bouton « Ouvrir dans september » et au bilan hebdo.</p>'+
+      '</div></div>';
+  }
+  if(modal==="data"){
+    const vide=!venues.size;
+    return '<div class="modal" id="ovl"><div class="mbox" style="max-width:600px"><h2>Sauvegarde</h2>'+
+      (vide?'<div class="warn"><b>Le fichier est vide.</b> Charge le JSON de d\u00E9part, ou une sauvegarde, pour le remplir.</div>':'')+
+      '<p>Un seul fichier JSON contient tout : lieux, personnes, \u00E9changes, liens, r\u00E9glages. '+
+      'C\u2019est la copie de secours, et c\u2019est aussi par l\u00E0 qu\u2019on remplit une base neuve.</p>'+
+      '<div class="acts" style="margin-top:12px"><button class="b" data-a="backup">T\u00E9l\u00E9charger la sauvegarde</button>'+
+        '<button class="b o" data-a="export">Exporter en CSV</button></div>'+
+      '<h2 style="margin-top:22px">Restaurer</h2>'+
+      '<p>Choisis un fichier JSON, ou colle son contenu.</p>'+
+      '<div class="acts" style="margin-top:10px"><input type="file" id="imp-file" accept=".json,application/json"></div>'+
+      '<textarea id="imp-box" placeholder="\u2026 ou colle le JSON ici" style="min-height:120px;margin-top:10px">'+esc(impRaw)+'</textarea>'+
+      '<div class="chk" style="margin-top:8px"><input type="checkbox" id="imp-rep" '+(impReplace?"checked":"")+'>'+
+        '<label for="imp-rep">Vider la base avant, au lieu de fusionner</label></div>'+
+      '<div class="acts" style="margin-top:12px"><button class="b" data-a="dorestore">Restaurer</button>'+
+        '<button class="b o" data-a="close">Fermer</button></div>'+
+      '<p class="msg'+(impMsg.charAt(0)==="!"?" err":"")+'">'+esc(impMsg.replace(/^!/,""))+'</p>'+
+      '</div></div>';
+  }
+  if(modal==="delp"){
+    const p=people.get(delPTarget);
+    if(!p) return '';
+    const att=(p.venueIds||[]).map(x=>venues.get(x)).filter(Boolean);
+    return '<div class="modal" id="ovl"><div class="mbox" style="max-width:520px"><h2>Supprimer '+esc(p.name)+' ?</h2>'+
+      '<p>La fiche de cette personne part pour tout le monde, avec ses coordonn\u00E9es et ce qu\u2019on savait d\u2019elle.</p>'+
+      (att.length>1?'<div class="warn">Elle est rattach\u00E9e \u00E0 '+att.length+' lieux : '+att.map(o=>esc(o.name)).join(", ")+
+        '. Si tu veux seulement la retirer d\u2019ici, utilise « d\u00E9tacher ».</div>':'')+
+      '<p class="hint">C\u2019est aussi ce qu\u2019il faut faire si la personne demande \u00E0 ne plus figurer dans le fichier.</p>'+
+      '<div class="acts" style="margin-top:15px">'+
+        '<button class="b danger" data-a="dodelp">Supprimer d\u00E9finitivement</button>'+
+        '<button class="b o" data-a="close">Annuler</button></div></div></div>';
+  }
+  if(modal==="del"){
+    const v=venues.get(delTarget);
+    if(!v){ return ''; }
+    const n=logsOf(v.id).length, pp=peopleOf(v.id);
+    return '<div class="modal" id="ovl"><div class="mbox" style="max-width:520px"><h2>Supprimer '+esc(v.name)+' ?</h2>'+
+      '<p>La fiche part pour tout le monde, et elle ne reviendra pas.</p>'+
+      '<div class="warn">Seront effacés :<br>\u00B7 la fiche et ses notes'+
+      (n?'<br>\u00B7 '+n+' échange'+(n>1?'s':'')+' consigné'+(n>1?'s':''):'')+
+      (pp.length?'<br>\u00B7 le rattachement de '+pp.map(p=>esc(p.name)).join(", ")+' (les personnes, elles, restent)':'')+
+      '</div>'+
+      '<p class="hint">Si le lieu existe encore mais ne donne rien, « Laisser tomber » est préférable : ça garde la mémoire de ce qui a été tenté.</p>'+
+      '<div class="acts" style="margin-top:15px">'+
+        '<button class="b danger" data-a="dodel">Supprimer définitivement</button>'+
+        '<button class="b o" data-a="close">Annuler</button></div></div></div>';
+  }
+  if(modal==="months") return monthsFillHTML();
+  if(modal==="weekly"){
+    const t=digest(7);
+    return '<div class="modal" id="ovl"><div class="mbox" style="max-width:680px"><h2>Bilan de la semaine</h2>'+
+      '<p>Relis, corrige si besoin, puis envoie-le sur '+esc(boite())+'. Personne ne peut l\u2019expédier à ta place : la page ne tourne pas quand elle est fermée.</p>'+
+      '<textarea id="wbox" style="min-height:300px;font-size:13px;line-height:1.5">'+esc(t)+'</textarea>'+
+      '<div class="acts" style="margin-top:13px">'+
+        '<button class="b" data-a="wsend">Ouvrir dans '+esc(mailLabel())+'</button>'+
+        '<button class="b o" data-a="wcopy">Copier</button>'+
+        '<button class="b o" data-a="close">Fermer</button></div>'+
+      '<p class="hint" id="wmsg"></p></div></div>';
+  }
+  if(modal!=="add") return "";
+  if(addForm){
+    const f=addForm,F=(id,l,v,p)=>'<div class="f"><label for="'+id+'">'+l+'</label><input id="'+id+'" value="'+esc(v)+'"'+(p?' placeholder="'+p+'"':'')+'></div>';
+    return '<div class="modal" id="ovl"><div class="mbox"><h2>Vérifie avant d\u2019enregistrer</h2>'+
+      (addMsg?'<div class="warn">'+esc(addMsg.replace(/^!/,""))+'</div>':'')+
+      (addDupe?'<div class="warn"><b>Doublon possible.</b> «&nbsp;'+esc(addDupe.name)+'&nbsp;» existe déjà'+(addDupe.city?' ('+esc(addDupe.city)+')':'')+'.</div>':'')+
+      '<div class="fields" style="border:none;padding-top:0;margin-top:0">'+
+        F("n-name","Nom",f.name)+
+        '<div class="f"><label for="n-type">Type</label><select id="n-type">'+TYPES.map(t=>'<option'+(f.type===t?' selected':'')+'>'+t+'</option>').join("")+'</select></div>'+
+        F("n-city","Ville",f.city)+
+        '<div class="f"><label for="n-country">Pays</label><select id="n-country"><option value="FR"'+(f.country!=="CH"?' selected':'')+'>France</option><option value="CH"'+(f.country==="CH"?' selected':'')+'>Suisse</option></select></div>'+
+        '<div class="f"><label for="n-month">Mois</label><select id="n-month"><option value="">— inconnu —</option>'+
+          MONTHS.map((m,i)=>'<option value="'+(i+1)+'"'+(f.month===i+1?' selected':'')+'>'+m+'</option>').join("")+'</select></div>'+
+        F("n-email","Mail",f.email,"vide si non trouvé")+F("n-phone","Téléphone",f.phone,"vide si non trouvé")+
+        F("n-contact","Contact",f.contact)+F("n-link","Lien",f.link)+
+        '<div class="f" style="grid-column:1/-1"><label for="n-notes">Notes</label><textarea id="n-notes" rows="2">'+esc(f.notes)+'</textarea></div>'+
+      '</div>'+
+      '<div class="acts" style="margin-top:16px"><button class="b" data-a="save">Enregistrer</button>'+
+      '<button class="b o" data-a="close">Annuler</button></div>'+
+      '<p class="hint">Tout est lu dans ton texte, rien n\u2019est deviné : un champ vide est un champ absent du collage.</p>'+
+      '</div></div>';
+  }
+  return '<div class="modal" id="ovl"><div class="mbox"><h2>Colle ce que tu as</h2>'+
+    '<p>Un nom, un lien, un mail reçu, trois lignes d\u2019une newsletter. La page y repère le nom, l\u2019adresse, le téléphone, la ville et le mois, et te laisse corriger.</p>'+
+    '<textarea id="raw" placeholder="Colle ici…">'+esc(addRaw)+'</textarea>'+
+    '<div class="acts" style="margin-top:13px">'+
+      '<button class="b" data-a="parse">Créer la fiche</button>'+
+      '<button class="b o" data-a="blank">Fiche vide</button>'+
+      '<button class="b o" data-a="close">Annuler</button></div>'+
+    (addMsg?'<p class="msg'+(addMsg.charAt(0)==="!"?" err":"")+'">'+esc(addMsg.replace(/^!/,""))+'</p>':'')+
+    '</div></div>';
+}
+function blankForm(txt){
+  const t=txt||"", low=t.toLowerCase();
+  const lines=t.split("\n").map(x=>x.trim()).filter(Boolean);
+
+  const em=t.match(/[\w.+-]+@[\w-]+\.[\w.]{2,}/);
+  const url=t.match(/https?:\/\/[^\s<>"']+/);
+  const ph=t.match(/(?:(?:\+33|\+41|0)[\s.-]?[1-9])(?:[\s.-]?\d{2}){4}/);
+
+  // nom : première ligne qui ne soit ni un mail, ni une URL, ni un numéro
+  let name="";
+  for(const l of lines){
+    if(/^[\w.+-]+@/.test(l)||/^https?:/i.test(l)) continue;
+    if(/^[\d\s.+-]{8,}$/.test(l)) continue;
+    name=l.replace(/[,;:.]+$/,"").slice(0,70); break;
+  }
+
+  // ville : on cherche celles qu'on connaît déjà
+  let city="", country="FR";
+  for(const k of Object.keys(CITY_ZONE)){
+    if(low.indexOf(k)>=0){
+      city=k.replace(/\s*\(\d+\)$/,"").replace(/\b\w/g,c=>c.toUpperCase());
+      const z=CITY_ZONE[k];
+      if(!/^\d+$/.test(z)) country="CH";
+      break;
+    }
+  }
+  if(/\b(suisse|schweiz|valais|vaud|genève|geneve)\b/.test(low)) country="CH";
+
+  // mois : nom de mois écrit en toutes lettres
+  let month=null;
+  MONTHS.forEach((m,i)=>{ if(month===null&&low.indexOf(m)>=0) month=i+1; });
+
+  // type : d'après les mots du texte
+  let type="Festival";
+  if(/\bfestival\b|\bfest\b|open air/.test(low)) type="Festival";
+  else if(/\bsmac\b/.test(low)) type="SMAC";
+  else if(/\bbar\b|\bcaf[ée]\b|\bpub\b|\bbistro/.test(low)) type="Café-concert";
+  else if(/\bassociation\b|\basso\b/.test(low)) type="Asso";
+  else if(/\bsalle\b|\bth[ée][âa]tre\b|\bmjc\b/.test(low)) type="Salle";
+
+  return {name,type,city,country,month,
+    email:em?em[0]:"", phone:ph?ph[0].trim():"", link:url?url[0]:"",
+    contact:"", notes:""};
+}
+
+function findDupe(n){
+  const a=norm(n); if(a.length<3) return null;
+  for(const v of venues.values()){ const b=norm(v.name);
+    if(b===a||(b.length>3&&a.length>3&&(b.includes(a)||a.includes(b)))) return v; }
+  return null;
+}
+
+/* ===================== Claude ===================== */
+function parseNew(){
+  const t=addRaw.trim();
+  if(!t){ const r=$("#raw"); if(r) r.focus(); return; }
+  addForm=blankForm(t); addDupe=findDupe(addForm.name);
+  addMsg=addForm.email||addForm.phone||addForm.link ? "" : "Aucun contact trouvé dans le texte. Complète à la main.";
+  render();
+}
+
+
+/* ===================== persistance ===================== */
+async function track(what){
+  const rec={id:"a"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+             at:new Date().toISOString(), who:me, what};
+  activity.push(rec); sessionLog.push(rec);
+  if(db){ try{ await db.doc("activity/"+rec.id).set(rec); }catch(e){} }
+}
+function sinceDays(n){
+  const cut=new Date(TODAY); cut.setDate(cut.getDate()-n);
+  return activity.filter(a=>new Date(a.at)>=cut).sort((a,b)=>a.at<b.at?1:-1);
+}
+
+async function patch(id,f){
+  const v=venues.get(id); if(!v) return;
+  Object.assign(v,f); venues.set(id,v);
+  if(!db) return;
+  try{ await db.doc("venues/"+id).update(f); }catch(e){ try{ await db.doc("venues/"+id).set(v); }catch(e2){} }
+}
+async function addLog(venueId,date,channel,note){
+  const id="e"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const r={id,venueId,date,channel,note,who:me,guessed:false};
+  exchanges.push(r);
+  if(db){ try{ await db.doc("exchanges/"+id).set(r); }catch(e){} }
+}
+async function delPerson(id){
+  const p=people.get(id); if(!p) return;
+  people.delete(id);
+  if(db){ try{ await db.doc("people/"+id).delete(); }catch(e){} }
+  await track("a supprim\u00E9 la fiche de "+p.name);
+  render();
+}
+async function delVenue(id){
+  const v=venues.get(id); if(!v) return;
+  const logs=logsOf(id);
+  // on détache d'abord la fiche des personnes, sinon elles gardent un lien mort
+  for(const p of peopleOf(id)){
+    const ids=(p.venueIds||[]).filter(x=>x!==id);
+    p.venueIds=ids; people.set(p.id,p);
+    if(db){ try{ await db.doc("people/"+p.id).update({venueIds:ids}); }catch(e){} }
+  }
+  exchanges=exchanges.filter(e=>e.venueId!==id);
+  venues.delete(id);
+  if(db){
+    for(const e of logs){ try{ await db.doc("exchanges/"+e.id).delete(); }catch(err){} }
+    try{ await db.doc("venues/"+id).delete(); }catch(e){}
+  }
+  await track("a supprimé "+v.name+(logs.length?" ("+logs.length+" échange(s) effacé(s))":""));
+  if(openId===id) openId=null;
+  render();
+}
+async function delLog(id){
+  exchanges=exchanges.filter(e=>e.id!==id); render();
+  if(db){ try{ await db.doc("exchanges/"+id).delete(); }catch(e){} }
+}
+async function savePerson(id,data,venueId){
+  if(id==="new"){
+    const pid=uid("p");
+    const rec={id:pid,...data,venueIds:[venueId]};
+    people.set(pid,rec);
+    if(db){ try{ await db.doc("people/"+pid).set(rec); }catch(e){} }
+  }else{
+    const p=people.get(id); if(!p) return;
+    Object.assign(p,data); people.set(id,p);
+    if(db){ try{ await db.doc("people/"+id).update(data); }catch(e){ try{ await db.doc("people/"+id).set(p); }catch(e2){} } }
+  }
+}
+async function linkPerson(pid,venueId,on){
+  const p=people.get(pid); if(!p) return;
+  const ids=(p.venueIds||[]).filter(x=>x!==venueId);
+  if(on) ids.push(venueId);
+  p.venueIds=ids; people.set(pid,p);
+  if(db){ try{ await db.doc("people/"+pid).update({venueIds:ids}); }catch(e){} }
+}
+
+/* On ouvre le webmail qui correspond à l'adresse du groupe, telle qu'elle est
+   réglée dans la page. Si le domaine n'est pas reconnu, on retombe sur mailto:. */
+function mailHost(){
+  const d=(boite().split("@")[1]||"").toLowerCase();
+  if(/outlook|hotmail|live|msn/.test(d)) return "outlook";
+  if(/gmail|googlemail/.test(d)) return "gmail";
+  return "";
+}
+function mailLabel(){
+  const h=mailHost();
+  return h==="outlook"?"Outlook":h==="gmail"?"Gmail":"ton client mail";
+}
+function compose(to,subject,body){
+  const q=encodeURIComponent, b=q(body.slice(0,1800)), h=mailHost();
+  if(h==="outlook")
+    return "https://outlook.live.com/mail/0/deeplink/compose?to="+q(to||"")+"&subject="+q(subject)+"&body="+b;
+  if(h==="gmail")
+    return "https://mail.google.com/mail/?view=cm&fs=1&to="+q(to||"")+"&su="+q(subject)+"&body="+b;
+  return mailtoLink(to,subject,body);
+}
+function mailtoLink(to,subject,body){
+  const q=encodeURIComponent;
+  return "mailto:"+q(to||"")+"?subject="+q(subject)+"&body="+q(body.slice(0,1600));
+}
+function splitDraft(t){
+  const ls=t.split("\n"), i=ls.findIndex(x=>/^objet\s*:/i.test(x.trim()));
+  return i>=0
+    ? {subject:ls[i].replace(/^objet\s*:/i,"").trim(), body:ls.slice(i+1).join("\n").trim()}
+    : {subject:"September Again \u2014 groupe de rock d\u2019Annecy", body:t};
+}
+
+async function saveNew(f){
+  const id=uid("n");
+  const v={id,name:f.name||"Sans nom",type:f.type,city:f.city,country:f.country,month:f.month,
+    status:"a_contacter",owner:me,contact:f.contact,email:f.email,phone:f.phone,link:f.link,notes:f.notes};
+  venues.set(id,v);
+  if(db){ try{ await db.doc("venues/"+id).set(v); }catch(e){} }
+  return id;
+}
+function csv(){
+  const q=s=>'"'+String(s==null?"":s).replace(/"/g,'""')+'"';
+  const head=["Nom","Prioritaire","Relancer à partir du","Date du concert","Type","Ville","Secteur","Pays","Mois édition","Mois déduit","Situation","Groupe","Référent","Contact","Mail","Téléphone","Lien","Dernier contact","Jours depuis","Personnes","Notes","Historique"];
+  const g={maintenant:"À écrire",sansadresse:"Contact manquant",attente:"En attente",plustard:"Mis de côté",regle:"Réglé"};
+  const rows=[...venues.values()].sort((a,b)=>a.name.localeCompare(b.name,"fr")).map(v=>{
+    const lg=logsOf(v.id),l=lg[0];
+    return [v.name,v.pin?"oui":"",v.relanceFrom?fmt(v.relanceFrom):"",v.gigDate?fmt(v.gigDate):"",v.type,v.city,zoneOf(v),v.country,v.month?MONTHS[v.month-1]:"",v.monthAuto?"oui":"",state(v).l,g[group(v)],
+      v.owner,v.contact,v.email,v.phone,v.link,l?fmt(l.date):"",l?days(l.date):"",peopleOf(v.id).map(p=>p.name+(p.role?" ("+p.role+")":"")+(pContact(p)?" "+pContact(p):"")+(p.via?" [via "+p.via+"]":"")).join(" | "),v.notes,
+      lg.map(e=>fmt(e.date)+" ("+e.who+", "+e.channel+") : "+e.note).join(" | ")].map(q).join(";");
+  });
+  return "\uFEFF"+head.map(q).join(";")+"\n"+rows.join("\n");
+}
+async function doExport(){
+  const data=csv(),name="september-again-"+todayISO+".csv";
+  try{ const u=URL.createObjectURL(new Blob([data],{type:"text/csv;charset=utf-8"}));
+    const a=document.createElement("a"); a.href=u; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(u),2000);
+  }catch(e){ alert("Téléchargement indisponible ici."); }
+}
+
+/* ===================== interactions ===================== */
+function fillMe(){
+  const sel=$("#me"); if(!sel) return;
+  const list=MEM();
+  if(list.indexOf(me)<0){ me=list[0]; try{ localStorage.setItem("sa_me",me); }catch(e){} }
+  const sig=list.join("\u0001")+"\u0002"+me;
+  if(sel.dataset.sig===sig) return;          // ne pas reconstruire pour rien
+  sel.dataset.sig=sig;
+  sel.innerHTML=list.map(m=>'<option'+(m===me?' selected':'')+'>'+esc(m)+'</option>').join("");
+}
+function render(){
+  const app=$("#app"); if(!app) return;
+  fillMe();
+  // on note où était le curseur pour le remettre après coup, au lieu d'annuler le rendu
+  const ae=document.activeElement;
+  let keep=null;
+  if(ae&&ae.id&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)){
+    keep={id:ae.id,
+          start:(typeof ae.selectionStart==="number")?ae.selectionStart:null,
+          end:(typeof ae.selectionEnd==="number")?ae.selectionEnd:null};
+  }
+  app.innerHTML=appHTML();
+  $("#nav").innerHTML=navHTML();
+  $("#side").innerHTML=sideHTML();
+  $("#modal").innerHTML=modalHTML();
+  wire();
+  if(keep){
+    const el=document.getElementById(keep.id);
+    if(el){
+      try{ el.focus({preventScroll:true}); }catch(e){ try{ el.focus(); }catch(e2){} }
+      if(keep.start!==null&&el.setSelectionRange){
+        try{ el.setSelectionRange(keep.start,keep.end); }catch(e){}
+      }
+    }
+  }
+}
+function wire(){
+  document.querySelectorAll("[data-a]").forEach(b=>b.onclick=e=>{e.stopPropagation();act(b.dataset.a);});
+  document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{collapsed[b.dataset.g]=!collapsed[b.dataset.g];render();});
+  document.querySelectorAll("[data-setm]").forEach(b=>b.onclick=async e=>{
+    e.stopPropagation();
+    const [id,m]=b.dataset.setm.split(":");
+    await patch(id,{month:parseInt(m,10),monthAuto:false});
+    await track("a daté "+(venues.get(id)||{}).name+" : "+MONTHS[parseInt(m,10)-1]);
+    render();
+  });
+  document.querySelectorAll("[data-zone]").forEach(b=>b.onclick=()=>{
+    zoneFilter = zoneFilter===b.dataset.zone ? null : b.dataset.zone; render();
+  });
+  document.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{
+    const el=document.getElementById(b.dataset.jump);
+    if(el&&el.scrollIntoView) el.scrollIntoView({block:"start",behavior:"smooth"});
+  });
+  const pin=$("#e-pin");
+  if(pin) pin.onchange=async()=>{
+    await patch(openId,{pin:pin.checked});
+    await track((pin.checked?"a marqué prioritaire ":"a retiré des prioritaires ")+venues.get(openId).name);
+    render();
+  };
+  document.querySelectorAll("[data-mo]").forEach(b=>b.onclick=()=>{
+    const val=b.dataset.mo==="none"?"none":parseInt(b.dataset.mo,10);
+    monthFilter = monthFilter===val ? null : val; render();
+  });
+  document.querySelectorAll("[data-pin]").forEach(b=>b.onclick=async e=>{
+    e.stopPropagation();
+    const v=venues.get(b.dataset.pin); if(v) await patch(v.id,{pin:!v.pin});
+    render();
+  });
+  document.querySelectorAll("[data-pedit]").forEach(b=>b.onclick=e=>{e.stopPropagation();pEdit=b.dataset.pedit;render();});
+  document.querySelectorAll("[data-pdel]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation(); delPTarget=b.dataset.pdel; modal="delp"; render();
+  });
+  document.querySelectorAll("[data-punlink]").forEach(b=>b.onclick=async e=>{
+    e.stopPropagation(); await linkPerson(b.dataset.punlink,openId,false); render();
+  });
+  document.querySelectorAll("[data-psave]").forEach(b=>b.onclick=async e=>{
+    e.stopPropagation();
+    const g=id=>{const el=$(id);return el?el.value.trim():"";};
+    const name=g("#p-name");
+    if(!name){ const el=$("#p-name"); if(el) el.focus(); return; }
+    await savePerson(b.dataset.psave,{name,role:g("#p-role"),email:g("#p-email"),
+      phone:g("#p-phone"),via:g("#p-via"),notes:g("#p-notes")},b.dataset.pv);
+    pEdit=null; render();
+  });
+  const pl=$("#plink");
+  if(pl) pl.onchange=async e=>{ e.stopPropagation(); if(pl.value){ await linkPerson(pl.value,openId,true); render(); } };
+  document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async e=>{
+    e.stopPropagation();
+    try{ await navigator.clipboard.writeText(b.dataset.copy); b.textContent="copié"; }catch(err){ b.textContent="échec"; }
+  });
+  document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation(); const id=b.dataset.goto;
+    openId=id; openFields=false; draft=""; draftMsg="";
+    const g=group(venues.get(id)); collapsed[g]=false; render();
+    const el=document.querySelector('[data-v="'+id+'"]');
+    if(el&&el.scrollIntoView) el.scrollIntoView({block:"center",behavior:"smooth"});
+  });
+  document.querySelectorAll("[data-write]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation(); const id=b.dataset.write;
+    openId=id; openFields=false; draftMsg="";
+    const g=group(venues.get(id)); collapsed[g]=false;
+    draft=tplFull(venues.get(id));          // modèle pré-rempli, calculé dans la page
+    render();
+    const el=document.querySelector('[data-v="'+id+'"]');
+    if(el&&el.scrollIntoView) el.scrollIntoView({block:"center",behavior:"smooth"});
+  });
+  document.querySelectorAll("[data-v]").forEach(b=>{
+    b.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); b.onclick(); } };
+    b.onclick=()=>{
+    openId = openId===b.dataset.v ? null : b.dataset.v;
+    openFields=false; draft=""; draftMsg=""; render();
+  };});
+  document.querySelectorAll("[data-x]").forEach(b=>b.onclick=e=>{e.stopPropagation();delLog(b.dataset.x);});
+  document.querySelectorAll("[data-k]").forEach(el=>el.onchange=async()=>{
+    const k=el.dataset.k; let val=el.value;
+    if(k==="month"){ val=val===""?null:parseInt(val,10); await patch(openId,{month:val,monthAuto:false}); render(); return; }
+    await patch(openId,{[k]:val}); if(el.tagName==="SELECT") render(); else render();
+  });
+  const q=$("#q"); if(q){ q.oninput=()=>{ query=q.value; render(); }; }
+  const raw=$("#raw"); if(raw) raw.oninput=()=>{ addRaw=raw.value; };
+  const imb=$("#imp-box"); if(imb) imb.oninput=()=>{ impRaw=imb.value; };
+  const imr=$("#imp-rep"); if(imr) imr.onchange=()=>{ impReplace=imr.checked; };
+  const dbox=$("#dbox"); if(dbox) dbox.oninput=()=>{ draft=dbox.value; };
+  const ovl=$("#ovl"); if(ovl) ovl.onclick=e=>{ if(e.target===ovl) act("close"); };
+}
+async function act(a){
+  const v=openId?venues.get(openId):null;
+  switch(a){
+    case "nodraft": draft=""; draftMsg=""; render(); break;
+    case "fields": openFields=!openFields; render(); break;
+    case "pnew": pEdit="new"; render(); break;
+    case "pcancel": pEdit=null; render(); break;
+    case "later": await patch(v.id,{snooze:plus(21)}); await track("a mis "+v.name+" de côté pour trois semaines"); openId=null; render(); break;
+    case "drop": await patch(v.id,{status:"mort"}); await track("a laissé tomber "+v.name); render(); break;
+    case "won": await patch(v.id,{status:"valide"}); await track("A UNE DATE : "+v.name); render(); break;
+    case "reopen": await patch(v.id,{status:"contacte",snooze:null}); render(); break;
+    case "addlog": {
+      const n=$("#x-note"); if(!n||!n.value.trim()){ if(n) n.focus(); return; }
+      await addLog(v.id,$("#x-date").value,$("#x-chan").value,n.value.trim());
+      if(v.status==="a_contacter") await patch(v.id,{status:"contacte"});
+      await track(v.name+" : "+n.value.trim().slice(0,70));
+      render(); break;
+    }
+    case "sent": {
+      const t=($("#dbox")||{value:draft}).value;
+      try{ await navigator.clipboard.writeText(t); }catch(e){}
+      const first=(t.split("\n").find(x=>x.trim()&&!/^objet\s*:/i.test(x.trim()))||"Mail envoyé").slice(0,120);
+      await addLog(v.id,todayISO,"mail",first);
+      if(v.status==="a_contacter") await patch(v.id,{status:"contacte"});
+      await track("a écrit à "+v.name);
+      draft=""; draftMsg=""; render(); break;
+    }
+    case "open": modal="add"; addForm=null; addMsg=""; addDupe=null; render(); break;
+    case "close": modal=null; addForm=null; addRaw=""; addMsg=""; delTarget=null; delPTarget=null; render(); break;
+    case "askdel": delTarget=openId; modal="del"; render(); break;
+    case "dodelp": { const id=delPTarget; modal=null; delPTarget=null; await delPerson(id); break; }
+    case "dodel": { const id=delTarget; modal=null; delTarget=null; await delVenue(id); break; }
+    case "parse": parseNew(); break;
+    case "blank": addForm=blankForm(addRaw); addDupe=findDupe(addForm.name); render(); break;
+    case "save": {
+      const g=id=>{const e=$(id);return e?e.value.trim():"";};
+      const mv=g("#n-month");
+      const id=await saveNew({name:g("#n-name"),type:g("#n-type"),city:g("#n-city"),country:g("#n-country"),
+        month:mv===""?null:parseInt(mv,10),email:g("#n-email"),phone:g("#n-phone"),link:g("#n-link"),
+        contact:g("#n-contact"),notes:g("#n-notes")});
+      modal=null; addForm=null; addRaw=""; addMsg=""; openId=id; collapsed.maintenant=false;
+      await track("a ajouté "+(venues.get(id)||{}).name); render(); break;
+    }
+    case "clearmo": monthFilter=null; render(); break;
+    case "clearzone": zoneFilter=null; render(); break;
+    case "sort-echeance": prioSort="echeance"; render(); break;
+    case "sort-silence": prioSort="silence"; render(); break;
+    case "tpl-full":  draft=tplFull(v); draftMsg=""; render(); break;
+    case "tpl-blank": draft=tplBlank(v); draftMsg=""; render(); break;
+    case "outlook": case "mailto": {
+      const t=($("#dbox")||{value:draft}).value, sp=splitDraft(t);
+      const to=(v.email||"").trim()||(peopleOf(v.id).find(p=>p.email&&p.email.trim())||{}).email||"";
+      const okOpen=openUrl(a==="outlook"?compose(to,sp.subject,sp.body):mailtoLink(to,sp.subject,sp.body));
+      draftMsg=okOpen
+        ? "Fenêtre ouverte. Reviens cliquer « Copier et consigner » pour garder la trace."
+        : "!Le navigateur a bloqué l\u2019ouverture. Utilise « Copier et consigner », puis colle dans ton mail.";
+      render(); break;
+    }
+    case "links": modal="links"; render(); break;
+    case "lsave": {
+      const nx={}; LINKDEFS.forEach(d=>{ const e=$("#l-"+d.k); nx[d.k]=e?e.value.trim():""; });
+      const g=id=>{const e=$(id);return e?e.value.trim():"";};
+      const mem=g("#s-membres").split(",").map(x=>x.trim()).filter(Boolean);
+      const ns={members:mem.length?mem:MEMBERS_DEF.slice(),
+                boite:g("#s-boite")||SETTINGS_DEF.boite, pitch:g("#s-pitch")||SETTINGS_DEF.pitch, corps:g("#s-corps")||SETTINGS_DEF.corps};
+      const mailChanged=ns.boite!==settings.boite;
+      links=nx; settings=ns; modal=null;
+      if(db){
+        try{ await db.doc("meta/links").set(links); }catch(e){}
+        try{ await db.doc("meta/settings").set(settings); }catch(e){}
+      }
+      await track("a mis à jour les réglages du groupe"+(mailChanged?" (adresse : "+ns.boite+")":""));
+      render(); break;
+    }
+    case "months": modal="months"; render(); break;
+    case "weekly": modal="weekly"; render(); break;
+    case "wcopy": {
+      try{ await navigator.clipboard.writeText($("#wbox").value); $("#wmsg").textContent="Copié."; }
+      catch(e){ $("#wmsg").textContent="Copie impossible, sélectionne le texte à la main."; }
+      break;
+    }
+    case "wsend": {
+      const t=$("#wbox").value;
+      try{ await navigator.clipboard.writeText(t); }catch(e){}
+      openUrl(compose(boite(),"Point démarchage \u2014 "+fmtL(todayISO),t));
+      $("#wmsg").textContent="Bilan copié aussi, au cas où il serait tronqué.";
+      break;
+    }
+    case "share": {
+      const t=shareText();
+      try{ await navigator.clipboard.writeText(t); }catch(e){}
+      openUrl(compose(boite(),"Démarchage \u2014 mise à jour de "+me,t));
+      sessionLog=[]; render(); break;
+    }
+    case "sharedone": sessionLog=[]; render(); break;
+    case "export": await doExport(); break;
+    case "data": modal="data"; impMsg=""; render(); break;
+    case "backup": await doBackup(); break;
+    case "dorestore": {
+      const box=$("#imp-box"), file=$("#imp-file");
+      let txt=box?box.value.trim():"";
+      if(!txt&&file&&file.files&&file.files[0]){
+        try{ txt=await file.files[0].text(); }catch(e){ impMsg="!Lecture du fichier impossible."; render(); break; }
+      }
+      if(!txt){ impMsg="!Choisis un fichier ou colle le JSON."; render(); break; }
+      let obj; try{ obj=JSON.parse(txt); }catch(e){ impMsg="!Ce n\u2019est pas du JSON valide."; render(); break; }
+      impMsg="Restauration en cours\u2026"; render();
+      try{ const r=await importDump(obj,!!($("#imp-rep")&&$("#imp-rep").checked));
+        impRaw=""; impMsg=r; render();
+      }catch(e){ impMsg="!\u00C9chec : "+((e&&e.message)||"?"); render(); }
+      break;
+    }
+  }
+}
+
+/* ===================== amorçage ===================== */
+function note(m){ const b=$("#boot"); if(b){ b.hidden=false; b.textContent=m; } }
+function loadLocal(){
+  venues=new Map(); exchanges=[]; people=new Map();
+  SEED_PEOPLE.forEach(p=>people.set(p.id,{...p,venueIds:[...p.venueIds]}));
+  SEED.forEach(s=>{ const {log,...v}=s; venues.set(v.id,{...v});
+    (log||[]).forEach((e,i)=>exchanges.push({id:s.id+"_"+i,venueId:s.id,date:e.d,who:e.w,channel:e.c,note:e.n,guessed:!!e.g})); });
+}
+/* ===================== où sont rangées les données =====================
+   Deux cas :
+     partage  une base Firestore, si FIREBASE_CONFIG est renseigné en haut du fichier
+     local    le navigateur seul — la page marche, mais rien n'est partagé
+   Les deux exposent la même poignée de méthodes ; pour en brancher une autre
+   (Supabase, CouchDB, un serveur à toi), il suffit d'écrire un troisième pilote
+   avec les mêmes méthodes : doc(chemin).get/set/update/delete/acquire,
+   et collection(nom).onSnapshot(callback). Rien d'autre dans la page n'y touche. */
+let dbMode="local";
+
+function localDriver(){
+  const KEY="sa_store_v1";
+  const read=()=>{ try{ return JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){ return {}; } };
+  const write=o=>{ try{ localStorage.setItem(KEY,JSON.stringify(o)); }catch(e){} };
+  const subs=[];
+  const emit=col=>{
+    const st=read();
+    const docs=Object.keys(st).filter(k=>k.indexOf(col+"/")===0)
+      .map(k=>({id:k.slice(col.length+1), data:()=>st[k]}));
+    subs.filter(x=>x.col===col).forEach(x=>{ try{ x.cb({docs}); }catch(e){} });
+  };
+  try{ window.addEventListener("storage",e=>{ if(e.key===KEY) [...new Set(subs.map(x=>x.col))].forEach(emit); }); }catch(e){}
+  const colOf=p=>p.split("/")[0];
+  return {
+    doc(path){ return {
+      async get(){ const d=read()[path]; return {exists:d!==undefined, data:()=>d}; },
+      async set(v){ const st=read(); st[path]=JSON.parse(JSON.stringify(v)); write(st); emit(colOf(path)); },
+      async update(f){ const st=read(); st[path]={...(st[path]||{}),...JSON.parse(JSON.stringify(f))}; write(st); emit(colOf(path)); },
+      async delete(){ const st=read(); delete st[path]; write(st); emit(colOf(path)); },
+      async acquire(){ return {acquired:true}; }
+    };},
+    collection(col){ return { onSnapshot(cb){ subs.push({col,cb}); emit(col); return ()=>{}; } }; }
+  };
+}
+
+function firebaseDriver(fs,store,cfg){
+  const PFX=cfg.saPrefix||"";                       // pour cohabiter avec d'autres données
+  const D=p=>{ const i=p.indexOf("/"); return fs.doc(store,PFX+p.slice(0,i),p.slice(i+1)); };
+  const wrap=d=>({id:d.id,data:()=>d.data()});
+  return {
+    doc(path){ const ref=D(path); return {
+      async get(){ const sn=await fs.getDoc(ref); return {exists:sn.exists(), data:()=>sn.data()}; },
+      async set(v){ await fs.setDoc(ref,JSON.parse(JSON.stringify(v))); },
+      async update(f){ await fs.setDoc(ref,JSON.parse(JSON.stringify(f)),{merge:true}); },
+      async delete(){ await fs.deleteDoc(ref); },
+      async acquire(o){
+        const holder=(o&&o.holder)||"x", ttl=(o&&o.ttlMs)||60000;
+        try{
+          return await fs.runTransaction(store,async tx=>{
+            const sn=await tx.get(ref), d=sn.exists()?sn.data():null, now=Date.now();
+            if(d&&d.__lockUntil&&d.__lockUntil>now&&d.__lockBy!==holder) return {acquired:false};
+            tx.set(ref,{__lockBy:holder,__lockUntil:now+ttl},{merge:true});
+            return {acquired:true};
+          });
+        }catch(e){ return {acquired:false}; }
+      }
+    };},
+    collection(col){ return { onSnapshot(cb,err){
+      return fs.onSnapshot(fs.collection(store,PFX+col),
+        sn=>cb({docs:sn.docs.map(wrap)}), e=>{ if(err) err(e); });
+    } }; }
+  };
+}
+
+let fbAuth=null, fbAuthM=null, account=null;
+
+/* Rien ne s'ouvre tant que personne n'est identifié. Les comptes ne se créent pas
+   ici : ils sont créés à la main dans la console Firebase, et la règle Firestore
+   ne laisse passer que ceux-là. Une page ouverte par un inconnu ne voit rien. */
+async function openDb(){
+  if(FIREBASE_CONFIG){
+    try{
+      const base="https://www.gstatic.com/firebasejs/"+FIREBASE_SDK+"/";
+      const [appM,fsM,authM]=await Promise.all([
+        import(base+"firebase-app.js"),
+        import(base+"firebase-firestore.js"),
+        import(base+"firebase-auth.js")
+      ]);
+      const app=appM.initializeApp(FIREBASE_CONFIG);
+      fbAuthM=authM; fbAuth=authM.getAuth(app);
+      try{ await authM.setPersistence(fbAuth,authM.browserLocalPersistence); }catch(e){}
+      account=await new Promise(res=>{ const off=authM.onAuthStateChanged(fbAuth,u=>{off();res(u);}); });
+      if(!account){ dbMode="gate"; return null; }
+      dbMode="firebase";
+      return firebaseDriver(fsM,fsM.getFirestore(app),FIREBASE_CONFIG);
+    }catch(e){
+      note("Base partag\u00E9e injoignable ("+((e&&e.message)||"?")+") \u2014 la page bascule sur une copie locale.");
+    }
+  }
+  dbMode="local";
+  return localDriver();
+}
+function dbLabel(){
+  if(dbMode==="firebase") return "base partag\u00E9e \u00B7 "+esc((account&&account.email)||"connect\u00E9");
+  return "copie locale \u2014 rien n\u2019est partag\u00E9";
+}
+
+/* ---------- écran de connexion ---------- */
+function gate(msg){
+  $("#shell").hidden=true; $("#boot").hidden=true;
+  const g=$("#gate"); g.hidden=false;
+  g.innerHTML='<div class="gbox"><h2>September Again</h2>'+
+    '<p>Le fichier de d\u00E9marchage contient les coordonn\u00E9es de gens qui nous ont r\u00E9pondu. '+
+    'Il faut un compte pour l\u2019ouvrir.</p>'+
+    '<div class="fields" style="border:none;padding-top:0;margin-top:0">'+
+      '<div class="f" style="grid-column:1/-1"><label for="g-mail">Adresse</label>'+
+        '<input id="g-mail" type="email" autocomplete="username"></div>'+
+      '<div class="f" style="grid-column:1/-1"><label for="g-pass">Mot de passe</label>'+
+        '<input id="g-pass" type="password" autocomplete="current-password"></div>'+
+    '</div>'+
+    '<div class="acts" style="margin-top:14px"><button class="b" id="g-in">Entrer</button>'+
+      '<button class="b o s" id="g-forgot">Mot de passe oubli\u00E9</button></div>'+
+    '<p class="msg'+(msg&&msg.charAt(0)==="!"?" err":"")+'" id="g-msg">'+esc((msg||"").replace(/^!/,""))+'</p>'+
+    '</div>';
+  const go=async()=>{
+    const m=$("#g-mail").value.trim(), p=$("#g-pass").value;
+    if(!m||!p){ $("#g-msg").textContent="Adresse et mot de passe."; return; }
+    $("#g-msg").textContent="\u2026";
+    try{ await fbAuthM.signInWithEmailAndPassword(fbAuth,m,p); location.reload(); }
+    catch(e){
+      const c=(e&&e.code)||"";
+      $("#g-msg").className="msg err";
+      $("#g-msg").textContent=/wrong-password|invalid-credential|user-not-found/.test(c)
+        ? "Adresse ou mot de passe incorrect."
+        : /too-many-requests/.test(c) ? "Trop de tentatives. R\u00E9essaie dans quelques minutes."
+        : "\u00C9chec de la connexion ("+(c||"?")+").";
+    }
+  };
+  $("#g-in").onclick=go;
+  $("#g-pass").onkeydown=e=>{ if(e.key==="Enter") go(); };
+  $("#g-forgot").onclick=async()=>{
+    const m=$("#g-mail").value.trim();
+    if(!m){ $("#g-msg").textContent="Mets ton adresse au-dessus d\u2019abord."; return; }
+    try{ await fbAuthM.sendPasswordResetEmail(fbAuth,m); $("#g-msg").className="msg"; $("#g-msg").textContent="Mail de r\u00E9initialisation envoy\u00E9."; }
+    catch(e){ $("#g-msg").className="msg err"; $("#g-msg").textContent="Envoi impossible ("+((e&&e.code)||"?")+")."; }
+  };
+  $("#g-mail").focus();
+}
+async function signOut(){
+  try{ await fbAuthM.signOut(fbAuth); }catch(e){}
+  location.reload();
+}
+/* ---------- sauvegarde et restauration ----------
+   Un seul fichier JSON contient tout. C'est la copie de secours, et c'est aussi
+   par là qu'une base vide se remplit. */
+function dump(){
+  return {
+    format:"september-again/1",
+    exporte:new Date().toISOString(),
+    venues:[...venues.values()],
+    people:[...people.values()],
+    exchanges:exchanges.slice(),
+    links:{...links},
+    settings:{...settings}
+  };
+}
+async function doBackup(){
+  const data=JSON.stringify(dump(),null,1), name="september-again-"+todayISO+".json";
+  try{ const u=URL.createObjectURL(new Blob([data],{type:"application/json"}));
+    const a=document.createElement("a"); a.href=u; a.download=name; a.click();
+    setTimeout(()=>URL.revokeObjectURL(u),2000);
+  }catch(e){ alert("T\u00E9l\u00E9chargement indisponible ici."); }
+}
+async function importDump(obj,replace){
+  if(!obj||typeof obj!=="object") throw new Error("fichier illisible");
+  const V=Array.isArray(obj.venues)?obj.venues:[];
+  const Pp=Array.isArray(obj.people)?obj.people:[];
+  const X=Array.isArray(obj.exchanges)?obj.exchanges:[];
+  if(!V.length&&!Pp.length) throw new Error("aucun lieu dans le fichier");
+  if(replace){
+    for(const v of [...venues.values()]) { try{ await db.doc("venues/"+v.id).delete(); }catch(e){} }
+    for(const p of [...people.values()]) { try{ await db.doc("people/"+p.id).delete(); }catch(e){} }
+    for(const e of exchanges)            { try{ await db.doc("exchanges/"+e.id).delete(); }catch(er){} }
+    venues=new Map(); people=new Map(); exchanges=[];
+  }
+  const jobs=[];
+  Pp.forEach(p=>{ const r={...p,venueIds:p.venueIds||[]}; people.set(r.id,r); jobs.push(()=>db.doc("people/"+r.id).set(r)); });
+  V.forEach(v=>{ venues.set(v.id,{...v}); jobs.push(()=>db.doc("venues/"+v.id).set(v)); });
+  X.forEach(e=>{ exchanges.push({...e}); jobs.push(()=>db.doc("exchanges/"+e.id).set(e)); });
+  if(obj.links&&Object.keys(obj.links).length){ links={...links,...obj.links}; jobs.push(()=>db.doc("meta/links").set(links)); }
+  if(obj.settings&&Object.keys(obj.settings).length){ settings={...SETTINGS_DEF,...obj.settings}; jobs.push(()=>db.doc("meta/settings").set(settings)); }
+  for(let i=0;i<jobs.length;i+=4) await Promise.all(jobs.slice(i,i+4).map(f=>f()));
+  await track("a import\u00E9 "+V.length+" lieux et "+Pp.length+" personnes");
+  render();
+  return V.length+" lieux, "+Pp.length+" personnes, "+X.length+" \u00E9changes r\u00E9tablis.";
+}
+
+async function boot(){
+  const sel=$("#me");
+  fillMe();
+  sel.onchange=()=>{ me=sel.value; localStorage.setItem("sa_me",me); render(); };
+  $("#addbtn").onclick=()=>act("open");
+  loadLocal();
+  note("Ouverture\u2026");
+  db=await openDb();
+  if(dbMode==="gate"){ gate(""); return; }
+  $("#boot").hidden=true; $("#shell").hidden=false;
+  if(dbMode==="firebase"){
+    const out=document.createElement("button");
+    out.className="lnk"; out.textContent="Sortir";
+    out.onclick=()=>signOut();
+    $("#me").parentNode.appendChild(out);
+  }
+  render();
+  if(!db){ render(); return; }
+  try{ const ls=await db.doc("meta/links").get(); if(ls.exists&&ls.data()) links={...links,...ls.data()}; }catch(e){}
+  try{ const st=await db.doc("meta/settings").get(); if(st.exists&&st.data()) settings={...SETTINGS_DEF,...st.data()}; }catch(e){}
+  db.collection("activity").onSnapshot(s=>{
+    activity=s.docs.map(d=>d.data()).filter(Boolean);
+  },()=>{});
+  let live=false,pend=null;
+  db.collection("venues").onSnapshot(s=>{
+    if(!s.docs.length&&!live) return;
+    const m=new Map(); s.docs.forEach(d=>{const x=d.data();m.set(x.id||d.id,{...x,id:x.id||d.id});});
+    venues=m; live=true; if(pend){ exchanges=pend; pend=null; } render();
+  },()=>{});
+  db.collection("people").onSnapshot(s=>{
+    if(!s.docs.length&&!live) return;
+    const m=new Map(); s.docs.forEach(d=>{const x=d.data();m.set(x.id||d.id,{...x,id:x.id||d.id,venueIds:x.venueIds||[]});});
+    people=m; render();
+  },()=>{});
+  db.collection("exchanges").onSnapshot(s=>{
+    const l=s.docs.map(d=>{const x=d.data();return {...x,id:x.id||d.id};});
+    if(live){ exchanges=l; render(); } else pend=l;
+  },()=>{});
+}
+function start(){
+  window.addEventListener("error",e=>note("Erreur : "+(e.message||"?")));
+  try{ boot(); }catch(e){ note("Erreur au démarrage : "+((e&&e.message)||e)); }
+  setTimeout(()=>{ const a=$("#app"); if(!a||!a.innerHTML.trim()) note("Rien ne s'est affiché. Recharge la page."); },6000);
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",start); else start();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+rules_version = '2';
+
+/* Règle unique : il faut être l'un des comptes listés ci-dessous.
+   Tout le reste est refusé — y compris la lecture.
+   Les UID se lisent dans Firebase → Authentication → Users. */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function membre() {
+      return request.auth != null
+          && request.auth.uid in [
+               "REMPLACE_PAR_UID_SPOOX",
+               "REMPLACE_PAR_UID_JOHN",
+               "REMPLACE_PAR_UID_PM",
+               "REMPLACE_PAR_UID_LOIC"
+             ];
+    }
+
+    match /{document=**} {
+      allow read, write: if membre();
+    }
+  }
+}

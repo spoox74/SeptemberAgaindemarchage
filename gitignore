@@ -1,0 +1,8 @@
+# Les données ne vont jamais dans le dépôt.
+donnees-initiales.json
+september-again-*.json
+september-again-*.csv
+*.backup.json
+
+config.js
+.DS_Store
