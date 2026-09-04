@@ -255,6 +255,8 @@ const LEAD_MIN=4,LEAD_MAX=8,STALE=45;
    dans un config.js chargé AVANT ce fichier :
        window.SA_FIREBASE = { apiKey: "...", projectId: "...", appId: "..." };
    Sans config, la page fonctionne quand même, mais chacun n'a que sa copie locale. */
+const FIREBASE_CONFIG =
+  (typeof window!=="undefined" && window.SA_FIREBASE) ||
 const firebaseConfig = {
   apiKey: "AIzaSyAftFH6eEe90NZfLFQQIs8vKyz5DeBNc2M",
   authDomain: "september-again.firebaseapp.com",
