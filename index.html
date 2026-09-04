@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <title>September Again — démarchage</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" media="print" onload="this.media='all'"
@@ -249,23 +250,22 @@ const TYPES=["Festival","SMAC","Café-concert","Salle","Asso"];
 const LEAD_MIN=4,LEAD_MAX=8,STALE=45;
 
 /* ===================== configuration ===================== */
-/* Cette page est autonome : un seul fichier, aucune dépendance à installer,
-   elle s'ouvre même par un double-clic. Pour que tout le groupe voie les mêmes
-   données, il lui faut une base : renseigne la config ci-dessous, ou pose-la
-   dans un config.js chargé AVANT ce fichier :
-       window.SA_FIREBASE = { apiKey: "...", projectId: "...", appId: "..." };
-   Sans config, la page fonctionne quand même, mais chacun n'a que sa copie locale. */
-const FIREBASE_CONFIG =
-  (typeof window!=="undefined" && window.SA_FIREBASE) ||
-const firebaseConfig = {
-  apiKey: "AIzaSyAftFH6eEe90NZfLFQQIs8vKyz5DeBNc2M",
-  authDomain: "september-again.firebaseapp.com",
-  projectId: "september-again",
-  storageBucket: "september-again.firebasestorage.app",
+/* SEULE PARTIE À MODIFIER.
+   Recopie les valeurs données par Firebase entre les guillemets ci-dessous.
+   Ne touche à rien d'autre : pas aux noms à gauche des deux-points, pas aux
+   virgules, pas aux accolades. Tant que apiKey est vide, la page tourne en
+   copie locale, sans rien partager. */
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyAftFH6eEe90NZfLFQQIs8vKyz5DeBNc2M",
+  authDomain:        "september-again.firebaseapp.com",
+  projectId:         "september-again",
+  storageBucket:     "september-again.firebasestorage.app",
   messagingSenderId: "325808739619",
-  appId: "1:325808739619:web:10ce3832bf580b5409a896"
+  appId:             "1:325808739619:web:10ce3832bf580b5409a896"
 };
-const FIREBASE_SDK    = "10.12.5";
+/* ================= fin de la configuration ================= */
+
+const FIREBASE_SDK = "10.12.5";
 
 const GROUPS=[
  {k:"maintenant", t:"À écrire maintenant",  s:"Échéance proche ou silence prolongé, et on a de quoi les joindre."},
@@ -1502,8 +1502,14 @@ let fbAuth=null, fbAuthM=null, account=null;
 /* Rien ne s'ouvre tant que personne n'est identifié. Les comptes ne se créent pas
    ici : ils sont créés à la main dans la console Firebase, et la règle Firestore
    ne laisse passer que ceux-là. Une page ouverte par un inconnu ne voit rien. */
+function configOf(){
+  if(typeof window!=="undefined" && window.SA_FIREBASE) return window.SA_FIREBASE;
+  const c=FIREBASE_CONFIG;
+  return (c && typeof c.apiKey==="string" && c.apiKey.trim()) ? c : null;
+}
 async function openDb(){
-  if(FIREBASE_CONFIG){
+  const cfg=configOf();
+  if(cfg){
     try{
       const base="https://www.gstatic.com/firebasejs/"+FIREBASE_SDK+"/";
       const [appM,fsM,authM]=await Promise.all([
@@ -1511,13 +1517,13 @@ async function openDb(){
         import(base+"firebase-firestore.js"),
         import(base+"firebase-auth.js")
       ]);
-      const app=appM.initializeApp(FIREBASE_CONFIG);
+      const app=appM.initializeApp(cfg);
       fbAuthM=authM; fbAuth=authM.getAuth(app);
       try{ await authM.setPersistence(fbAuth,authM.browserLocalPersistence); }catch(e){}
       account=await new Promise(res=>{ const off=authM.onAuthStateChanged(fbAuth,u=>{off();res(u);}); });
       if(!account){ dbMode="gate"; return null; }
       dbMode="firebase";
-      return firebaseDriver(fsM,fsM.getFirestore(app),FIREBASE_CONFIG);
+      return firebaseDriver(fsM,fsM.getFirestore(app),cfg);
     }catch(e){
       note("Base partag\u00E9e injoignable ("+((e&&e.message)||"?")+") \u2014 la page bascule sur une copie locale.");
     }
