@@ -232,6 +232,10 @@ button.note:hover{border-left-color:var(--paint)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* ================= adaptation ordinateur ================= */
+#shell{height:100dvh;overflow:hidden}
+.modbtn{color:var(--paint);font-size:14px;font-variation-settings:"wght" 600}
+.modbtn:hover{text-decoration:underline}
+
 @media (min-width:900px){
   #app{flex-direction:row}
   .tabs{
@@ -244,7 +248,10 @@ button.note:hover{border-left-color:var(--paint)}
     display:flex;flex-direction:column;width:400px;flex:0 0 400px;
     border-right:1px solid var(--rule);height:100dvh;overflow:hidden
   }
-  .volet{flex:1 1 auto;height:100dvh;overflow-y:auto;position:relative}
+  .volet{flex:1 1 auto;min-width:0;min-height:0;height:100dvh;
+    overflow-y:auto;overscroll-behavior:contain;position:relative}
+  .volet .top{position:sticky;top:0;z-index:3;background:var(--case);justify-content:flex-end}
+  .colonne{min-height:0}
   .fab{bottom:22px}
   .feuille{left:auto;right:0;width:520px;max-height:100%;top:0;bottom:0;
     border-top:0;border-left:2px solid var(--paint);transform:translateX(102%)}
@@ -259,6 +266,10 @@ button.note:hover{border-left-color:var(--paint)}
 }
 .retour{color:var(--paint);font-size:14px;font-variation-settings:"wght" 600}
 @media (min-width:900px){.retour{display:none}}
+@media (max-width:899px){
+  .volet .top{justify-content:space-between}
+  .volet .dedans{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+}
 
 .boot{padding:40px 20px;text-align:center;color:var(--dust);font-size:14.5px}
 #gate{display:flex;justify-content:center;padding:44px 18px}
@@ -288,7 +299,7 @@ button.note:hover{border-left-color:var(--paint)}
 <body>
 <div id="boot" class="boot">Chargement…</div>
 <div id="gate" hidden></div>
-<div id="shell" hidden style="height:100dvh">
+<div id="shell" hidden>
 <div id="app">
 
   <nav class="tabs" id="tabs">
@@ -311,7 +322,7 @@ button.note:hover{border-left-color:var(--paint)}
   <section class="volet" id="volet">
     <header class="top">
       <button class="retour" id="retour">← Retour</button>
-      <button class="retour" style="color:var(--paint)" id="modifier">Modifier</button>
+      <button class="modbtn" id="modifier">Modifier</button>
     </header>
     <div class="dedans" id="fiche"><div class="videpc">Choisis un lieu dans la liste.</div></div>
   </section>
