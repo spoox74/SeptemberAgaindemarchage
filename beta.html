@@ -20,10 +20,12 @@
 html,body{margin:0;height:100%}
 body{
   background:var(--case);color:var(--chalk);
+  min-height:100dvh;
   font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
   font-variation-settings:"wdth" 100;font-size:16px;line-height:1.5;
   -webkit-font-smoothing:antialiased;overflow:hidden;
 }
+html{height:100%}
 button{font-family:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:left}
 button:focus-visible,a:focus-visible{outline:2px solid var(--paint);outline-offset:2px}
 
@@ -47,13 +49,13 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--paint);outline-offs
 .copiable button:hover{border-color:var(--paint)}
 .mini2{color:var(--paint);font-size:13px;border:1px solid var(--rule);padding:7px 11px;margin-top:8px}
 .bloc-ct{border-left:2px solid var(--rule);padding-left:11px;margin-bottom:14px}
-#scroll{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* défilement défini plus bas, une seule fois */
 .pad{padding:14px 16px 26px}
 
 /* ================= navigation basse ================= */
 .tabs{
   display:grid;grid-template-columns:repeat(3,1fr);
-  border-top:1px solid var(--rule);background:var(--panel);flex:0 0 auto;
+  border-top:1px solid var(--rule);background:var(--panel);flex:0 0 auto;align-self:stretch;
   padding-bottom:env(safe-area-inset-bottom)
 }
 .tabs button{
@@ -232,43 +234,47 @@ button.note:hover{border-left-color:var(--paint)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* ================= adaptation ordinateur ================= */
+/* ===== mise en page : un seul mécanisme de défilement =====
+   Chaque colonne est une boîte flexible en hauteur fixe. L'entête ne bouge
+   pas (flex:0 0 auto), le contenu défile (flex:1 1 auto + min-height:0).
+   min-height:0 est indispensable : sans lui, un enfant flexible refuse de
+   rétrécir sous la taille de son contenu, et rien ne défile. */
 #shell{height:100dvh;overflow:hidden}
 .modbtn{color:var(--paint);font-size:14px;font-variation-settings:"wght" 600}
 .modbtn:hover{text-decoration:underline}
+.retour{color:var(--paint);font-size:14px;font-variation-settings:"wght" 600}
+
+.colonne,.volet{display:flex;flex-direction:column;min-height:0;max-height:100%}
+.colonne .top,.volet .top{flex:0 0 auto}
+#scroll,.volet .dedans{flex:1 1 auto;min-height:0;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 
 @media (min-width:900px){
   #app{flex-direction:row}
   .tabs{
     order:-1;grid-template-columns:none;grid-auto-rows:max-content;
-    border-top:0;border-right:1px solid var(--rule);width:112px;padding:14px 0 0
+    border-top:0;border-right:1px solid var(--rule);width:112px;padding:14px 0;flex:0 0 112px
   }
   .tabs button{border-top:0;border-left:2px solid transparent;margin-top:0;padding:14px 6px}
   .tabs button[aria-current="true"]{border-top-color:transparent;border-left-color:var(--paint)}
-  .colonne{
-    display:flex;flex-direction:column;width:400px;flex:0 0 400px;
-    border-right:1px solid var(--rule);height:100dvh;overflow:hidden
-  }
-  .volet{flex:1 1 auto;min-width:0;min-height:0;height:100dvh;
-    overflow-y:auto;overscroll-behavior:contain;position:relative}
-  .volet .top{position:sticky;top:0;z-index:3;background:var(--case);justify-content:flex-end}
-  .colonne{min-height:0}
+  .colonne{width:400px;flex:0 0 400px;border-right:1px solid var(--rule);height:100%}
+  .volet{flex:1 1 auto;min-width:0;height:100%}
+  .volet .top{justify-content:flex-end}
+  .retour{display:none}
   .fab{bottom:22px}
   .feuille{left:auto;right:0;width:520px;max-height:100%;top:0;bottom:0;
     border-top:0;border-left:2px solid var(--paint);transform:translateX(102%)}
   .feuille.on{transform:translateX(0)}
-  .videpc{display:flex;align-items:center;justify-content:center;height:100%;color:var(--dust);font-size:15px;padding:40px;text-align:center}
+  .videpc{display:flex;align-items:center;justify-content:center;height:100%;
+    color:var(--dust);font-size:15px;padding:40px;text-align:center}
 }
+
 @media (max-width:899px){
-  .volet{position:absolute;inset:0;z-index:10;background:var(--case);display:none;flex-direction:column}
+  .colonne{flex:1 1 auto;height:100%}
+  .volet{position:absolute;inset:0;z-index:10;background:var(--case);display:none}
   .volet.on{display:flex}
-  .volet .dedans{flex:1 1 auto;overflow-y:auto}
-  .colonne{display:flex;flex-direction:column;flex:1 1 auto;overflow:hidden}
-}
-.retour{color:var(--paint);font-size:14px;font-variation-settings:"wght" 600}
-@media (min-width:900px){.retour{display:none}}
-@media (max-width:899px){
   .volet .top{justify-content:space-between}
-  .volet .dedans{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+}
 }
 
 .boot{padding:40px 20px;text-align:center;color:var(--dust);font-size:14.5px}
