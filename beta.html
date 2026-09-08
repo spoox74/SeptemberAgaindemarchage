@@ -1406,9 +1406,9 @@ document.addEventListener("click",e=>{
   /* --- réglages --- */
   if(e.target.closest("[data-Rsave]")){
     const g=id=>{const el=document.getElementById(id);return el?el.value.trim():"";};
-    R.groupe=g("#R-grp")||R.groupe; R.mail=g("#R-mail")||R.mail;
-    const mem=g("#R-mem").split(",").map(x=>x.trim()).filter(Boolean); if(mem.length) R.membres=mem;
-    const ty=g("#R-types").split(",").map(x=>x.trim()).filter(Boolean); if(ty.length) R.types=ty;
+    R.groupe=g("R-grp")||R.groupe; R.mail=g("R-mail")||R.mail;
+    const mem=g("R-mem").split(",").map(x=>x.trim()).filter(Boolean); if(mem.length) R.membres=mem;
+    const ty=g("R-types").split(",").map(x=>x.trim()).filter(Boolean); if(ty.length) R.types=ty;
     if(!R.membres.includes(moi)) moi=R.membres[0];
     sauveReglages(); fermerFeuille(); rendre(); return;
   }
@@ -1481,17 +1481,19 @@ document.addEventListener("click",e=>{
   }
   if(e.target.closest("[data-newok]")){
     const g=id=>{const el=document.getElementById(id);return el?el.value.trim():"";};
-    const nom=g("#N-nom"); if(!nom) return;
-    const v={id:"n"+Date.now().toString(36),name:nom,city:g("#N-ville"),zone:g("#N-zone"),
+    const nom=g("N-nom");
+    if(!nom){ alert("Il faut au moins un nom de lieu."); return; }
+    const v={id:"n"+Date.now().toString(36),name:nom,city:g("N-ville"),zone:g("N-zone"),
       type:(ficheEnCours&&ficheEnCours.type)||"Salle",month:(ficheEnCours&&ficheEnCours.month)||null,
       owner:(ficheEnCours&&ficheEnCours.owner)||moi,status:"a_contacter",pays:"FR",
-      mail:g("#N-mail"),tel:g("#N-tel"),link:g("#N-site"),notes:g("#N-note")};
+      mail:g("N-mail"),tel:g("N-tel"),link:g("N-site"),notes:g("N-note")};
     VENUES.push(v); sauveLieu(v); ficheEnCours=null; sel=v.id; fermerFeuille(); rendre(); return;
   }
   if(e.target.closest("[data-dateneuve]")){
     const g=id=>{const el=document.getElementById(id);return el?el.value.trim():"";};
-    const nom=g("#D-nom"), jour=g("#D-jour"); if(!nom||!jour) return;
-    const v={id:"n"+Date.now().toString(36),name:nom,city:g("#D-ville"),
+    const nom=g("D-nom"), jour=g("D-jour");
+    if(!nom||!jour){ alert("Il faut un nom de lieu et une date."); return; }
+    const v={id:"n"+Date.now().toString(36),name:nom,city:g("D-ville"),
       type:(ficheEnCours&&ficheEnCours.type)||"Salle",month:null,owner:moi,
       status:"valide",dateActee:jour,pays:"FR"};
     VENUES.push(v); sauveLieu(v); ficheEnCours=null; sel=v.id; fermerFeuille(); rendre(); return;
