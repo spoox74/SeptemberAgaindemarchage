@@ -94,6 +94,10 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--paint);outline-offs
 .row .etat.go{color:var(--go)}
 .row .etat.mou{color:var(--dust)}
 .vide{color:var(--dust);font-size:14px;border:1px dashed var(--rule);padding:14px}
+.alerte{border:1px solid var(--flag);border-left-width:3px;background:var(--panel);
+  padding:11px 13px;margin-bottom:14px;font-size:13.8px}
+.alerte b{color:var(--flag);font-variation-settings:"wght" 700}
+.lnkj{color:var(--paint);font-size:13px;border-bottom:1px solid var(--rule)}
 .bilan{display:block;width:100%;border:1px solid var(--rule);border-left:3px solid var(--paint);
   background:var(--panel);padding:13px 14px;margin-bottom:22px}
 .bilan:hover{border-color:var(--paint)}
@@ -729,7 +733,8 @@ let F={...F0,types:[],owners:[],etats:[],zones:[]};
 const PRESETS={
   relance:{l:"à relancer", f:v=>{const w=fenetre(v);return v.type==="Festival"&&w&&w.ouverte&&v.status!=="valide";}},
   prio:{l:"prioritaires", f:v=>!!v.pin},
-  attente:{l:"en attente", f:v=>etat(v).k==="flag"||etat(v).k==="cours"}
+  attente:{l:"en attente", f:v=>etat(v).k==="flag"||etat(v).k==="cours"},
+  rappel:{l:"rappel posé", f:v=>!!v.rappel&&v.status!=="valide"&&v.status!=="mort"}
 };
 function nbFiltres(){
   return (F.preset?1:0)+F.types.length+F.owners.length+F.etats.length+F.zones.length+(F.manque?1:0)+(F.sansMois?1:0);
@@ -770,8 +775,17 @@ function vueAccueil(){
       'Charge ta sauvegarde pour commencer : ta production n\'est pas touchée, tout reste dans l\'espace beta.</div>'+
       '<button class="btn" data-import="1">Charger une sauvegarde</button>'+
       '<p class="hint" style="margin-top:10px">Depuis ton application en service : Sauvegarde · restauration → Télécharger la sauvegarde.</p>';
-  return bilanHTML()+
+  const rappels=VENUES.filter(PRESETS.rappel.f);
+  const echus=rappels.filter(v=>new Date(v.rappel)<=AUJ);
+  return (echus.length
+      ? '<div class="alerte"><b>'+echus.length+' rappel'+(echus.length>1?'s sont tombés':' est tombé')+'.</b> '+
+        esc(echus.slice(0,3).map(v=>v.name).join(", "))+(echus.length>3?'\u2026':'')+
+        ' <button class="lnkj" data-go=\'{"preset":"rappel"}\'>voir \u2192</button></div>'
+      : '')+
+    bilanHTML()+
     bloc("À relancer",relance,{preset:"relance"})+
+    '<div style="height:16px"></div>'+
+    bloc("Rappels posés",rappels,{preset:"rappel"})+
     '<div style="height:16px"></div>'+
     bloc("Prioritaires",prio,{preset:"prio"})+
     '<div style="height:16px"></div>'+
@@ -1044,6 +1058,8 @@ const FEUILLES={
       '<div class="fld"><input class="box" id="R-types" style="width:100%" value="'+esc(R.types.join(", "))+'"></div></div>'+
 
       '<div class="fgroupe"><h6>Données</h6>'+
+      '<button class="btn ghost" data-icstout="1">Exporter rappels et dates vers un calendrier</button>'+
+      '<p style="color:var(--dust);font-size:12.5px;margin:8px 0 14px">Un fichier .ics à ouvrir sur ton téléphone : c\'est ton calendrier qui prévient, la veille au soir.</p>'+
       '<button class="btn ghost" data-export="1">Télécharger la sauvegarde</button>'+
       '<button class="btn ghost" style="margin-top:8px" data-import="1">Restaurer une sauvegarde</button></div>'+
 
@@ -1156,6 +1172,7 @@ const FEUILLES={
         : '')+
 
       '<button class="btn" data-dateok="1">Enregistrer</button>'+
+      '<button class="btn ghost" style="margin-top:8px" data-icsdate="1">Ajouter à mon calendrier</button>'+
       '<button class="btn ghost" style="margin-top:8px" data-dateoff="1">Finalement non, la date tombe</button>';
   },
   rappel(v){
@@ -1167,6 +1184,7 @@ const FEUILLES={
       '<div class="fld" style="margin-top:14px"><label for="r-date">Ou une date précise</label>'+
         '<input class="box" id="r-date" type="date" style="width:100%" value="'+esc(v.rappel||"")+'"></div>'+
       '<button class="btn" data-rapok="1">Poser le rappel</button>'+
+      (v.rappel?'<button class="btn ghost" style="margin-top:8px" data-icsrap="1">Ajouter à mon calendrier</button>':'')+
       (v.rappel?'<button class="btn ghost" style="margin-top:8px" data-rap="">Enlever le rappel</button>':'');
   },
   personne(p){
@@ -1281,6 +1299,55 @@ function bilanHTML(){
     '<span class="bn"><b>'+b.urgent.length+'</b> échéance'+(b.urgent.length>1?'s':'')+' dans les sept jours'+
       (b.dates.length?' · <b>'+b.dates.length+'</b> date'+(b.dates.length>1?'s':'')+' à venir':'')+'</span>'+
     '<span class="bg">Lire et envoyer au groupe →</span></button>';
+}
+
+function ics(evts){
+  const pad=n=>String(n).padStart(2,"0");
+  const jour=d=>{const x=new Date(d);return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate());};
+  const lend=d=>{const x=new Date(d);x.setDate(x.getDate()+1);return jour(x);};
+  const ech=t=>String(t||"").replace(/([,;\\])/g,"\\$1").replace(/\n/g,"\\n");
+  const now=new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
+  let t="BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//MNG//FR\r\nCALSCALE:GREGORIAN\r\n";
+  evts.forEach(e=>{
+    t+="BEGIN:VEVENT\r\nUID:mng-"+e.uid+"@septemberagain\r\nDTSTAMP:"+now+"\r\n"+
+       "DTSTART;VALUE=DATE:"+jour(e.d)+"\r\nDTEND;VALUE=DATE:"+lend(e.d)+"\r\n"+
+       "SUMMARY:"+ech(e.titre)+"\r\n"+(e.desc?"DESCRIPTION:"+ech(e.desc)+"\r\n":"")+
+       (e.lieu?"LOCATION:"+ech(e.lieu)+"\r\n":"")+
+       "BEGIN:VALARM\r\nTRIGGER:-PT9H\r\nACTION:DISPLAY\r\nDESCRIPTION:"+ech(e.titre)+"\r\nEND:VALARM\r\n"+
+       "END:VEVENT\r\n";
+  });
+  return t+"END:VCALENDAR\r\n";
+}
+function telecharger(txt,nom,type){
+  try{
+    const u=URL.createObjectURL(new Blob([txt],{type:type||"text/plain"}));
+    const a=document.createElement("a"); a.href=u; a.download=nom; a.click();
+    setTimeout(()=>URL.revokeObjectURL(u),2000);
+  }catch(e){ fail("téléchargement",e); }
+}
+function icsRappel(v){
+  telecharger(ics([{uid:"r-"+v.id,d:v.rappel,titre:"Relancer "+v.name,lieu:v.city||"",
+    desc:"MNG — "+v.type+(v.city?" · "+v.city:"")+" · référent "+v.owner}]),
+    "rappel-"+v.id+".ics","text/calendar");
+}
+function icsDate(v){
+  const j=v.jour||{};
+  telecharger(ics([{uid:"d-"+v.id,d:v.dateActee,titre:v.name+" — concert",
+    lieu:v.adresse||v.city||"",
+    desc:[j.arrivee?"Arrivée "+j.arrivee:"",j.balances?"Balances "+j.balances:"",
+          j.show?"Show "+j.show:"",j.duree?"Durée "+j.duree:"",j.cachet?"Cachet "+j.cachet:""]
+          .filter(Boolean).join(" · ")}]),
+    "concert-"+v.id+".ics","text/calendar");
+}
+function icsTout(){
+  const e=[];
+  VENUES.filter(PRESETS.rappel.f).forEach(v=>e.push({uid:"r-"+v.id,d:v.rappel,
+    titre:"Relancer "+v.name,lieu:v.city||"",desc:"MNG — référent "+v.owner}));
+  VENUES.filter(v=>v.status==="valide"&&v.dateActee).forEach(v=>e.push({uid:"d-"+v.id,d:v.dateActee,
+    titre:v.name+" — concert",lieu:v.adresse||v.city||""}));
+  if(!e.length){ alert("Rien à mettre dans le calendrier pour l\'instant."); return; }
+  telecharger(ics(e),"mng-agenda.ics","text/calendar");
+  alert(e.length+" rendez-vous exportés. Ouvre le fichier pour les ajouter à ton calendrier.");
 }
 
 function copier(t,btn){
@@ -1433,6 +1500,9 @@ document.addEventListener("click",e=>{
   const mdel=e.target.closest("[data-moddel]");
   if(mdel){ R.modeles.splice(Number(mdel.dataset.moddel),1); modeleChoisi=0; sauveReglages(); ouvrirFeuille("Réglages",FEUILLES.reglages()); return; }
   if(e.target.closest("[data-export]")){ doBackup(); return; }
+  if(e.target.closest("[data-icstout]")){ icsTout(); return; }
+  if(e.target.closest("[data-icsrap]")){ const v=VENUES.find(x=>x.id===sel); if(v&&v.rappel) icsRappel(v); return; }
+  if(e.target.closest("[data-icsdate]")){ const v=VENUES.find(x=>x.id===sel); if(v&&v.dateActee) icsDate(v); return; }
   if(e.target.closest("[data-import]")){
     (async()=>{
       const obj=await choisirFichier();
