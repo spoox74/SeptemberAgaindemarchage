@@ -1073,7 +1073,9 @@ const FEUILLES={
       '<div class="fgroupe"><h6>Données</h6>'+
       '<button class="btn ghost" data-icstout="1">Exporter rappels et dates vers un calendrier</button>'+
       '<p style="color:var(--dust);font-size:12.5px;margin:8px 0 14px">Un fichier .ics à ouvrir sur ton téléphone : c\'est ton calendrier qui prévient, la veille au soir.</p>'+
-      '<button class="btn ghost" data-export="1">Télécharger la sauvegarde</button>'+
+      '<button class="btn ghost" data-export="1">Télécharger la sauvegarde (JSON)</button>'+
+      '<button class="btn ghost" style="margin-top:8px" data-csv="1">Exporter en CSV</button>'+
+      '<p style="color:var(--dust);font-size:12.5px;margin:8px 0 14px">Le JSON sert à restaurer, le CSV à ouvrir dans un tableur.</p>'+
       '<button class="btn ghost" style="margin-top:8px" data-import="1">Restaurer une sauvegarde</button></div>'+
 
       '<button class="btn" data-Rsave="1">Enregistrer</button>';
@@ -1352,6 +1354,39 @@ function icsDate(v){
           .filter(Boolean).join(" · ")}]),
     "concert-"+v.id+".ics","text/calendar");
 }
+/* Export CSV, dans les mêmes colonnes que l'application en service,
+   plus celles ajoutées ici : rappel, date du concert, déroulé du jour J. */
+function csv(){
+  // un retour à la ligne dans une cellule perturbe certains tableurs : on l'aplatit
+  const q=x=>'"'+String(x==null?"":x).replace(/\r?\n/g," · ").replace(/"/g,'""')+'"';
+  const jr=d=>d?fmtDate(d):"";
+  const GROUPE={0:"Fenêtre ouverte",1:"Silence dépassé",2:"À venir",3:"Jamais contacté",4:"Date obtenue",5:"Laissé tomber"};
+  const head=["Nom","Prioritaire","Rappel","Date du concert","Type","Ville","Secteur","Pays",
+    "Mois édition","Situation","Échéance","Référent","Mail","Téléphone","Lien","Adresse",
+    "Dernier contact","Mois de silence","Personnes","Notes",
+    "Arrivée","Balances","Heure du show","Temps de show","Rémunération","Contacts du jour",
+    "On y retourne","Bilan","Historique"];
+  const lignes=VENUES.slice().sort((a,b)=>a.name.localeCompare(b.name,"fr")).map(v=>{
+    const lg=logs(v.id), l=lg[0], h=echeance(v), j=v.jour||{};
+    return [v.name, v.pin?"oui":"", jr(v.rappel), jr(v.dateActee), v.type, v.city, nomZone(zoneOf(v)),
+      v.pays==="CH"?"Suisse":"France", v.month?MOIS[v.month-1]:"", GROUPE[h.b]||"", h.lab,
+      v.owner, v.mail, v.tel, v.link, v.adresse,
+      l?fmtDate(l.d):"", l?moisDepuis(l.d):"",
+      gens(v.id).map(p=>p.nom+(p.role?" ("+p.role+")":"")+(p.tel||p.mail?" "+(p.tel||p.mail):"")+(p.via?" [via "+p.via+"]":"")).join(" | "),
+      v.notes,
+      j.arrivee||"", j.balances||"", j.show||"", j.duree||"", j.cachet||"",
+      (j.contacts||[]).map(c=>[c.role,c.nom,c.tel,c.mail].filter(Boolean).join(" ")).join(" | "),
+      j.retour==="oui"?"oui":j.retour==="non"?"non":j.retour==="peut"?"peut-être":"", j.bilan||"",
+      lg.map(e=>fmtDate(e.d)+" ("+e.q+", "+e.c+") : "+e.n).join(" | ")
+    ].map(q).join(";");
+  });
+  return "\uFEFF"+head.map(q).join(";")+"\n"+lignes.join("\n");
+}
+function doExportCSV(){
+  if(!VENUES.length){ alert("Rien à exporter."); return; }
+  telecharger(csv(),"mng-"+AUJ.toISOString().slice(0,10)+".csv","text/csv;charset=utf-8");
+}
+
 function icsTout(){
   const e=[];
   VENUES.filter(PRESETS.rappel.f).forEach(v=>e.push({uid:"r-"+v.id,d:v.rappel,
@@ -1514,6 +1549,7 @@ document.addEventListener("click",e=>{
   const mdel=e.target.closest("[data-moddel]");
   if(mdel){ R.modeles.splice(Number(mdel.dataset.moddel),1); modeleChoisi=0; sauveReglages(); ouvrirFeuille("Réglages",FEUILLES.reglages()); return; }
   if(e.target.closest("[data-export]")){ doBackup(); return; }
+  if(e.target.closest("[data-csv]")){ doExportCSV(); return; }
   if(e.target.closest("[data-icstout]")){ icsTout(); return; }
   if(e.target.closest("[data-icsrap]")){ const v=VENUES.find(x=>x.id===sel); if(v&&v.rappel) icsRappel(v); return; }
   if(e.target.closest("[data-icsdate]")){ const v=VENUES.find(x=>x.id===sel); if(v&&v.dateActee) icsDate(v); return; }
